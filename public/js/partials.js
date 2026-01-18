@@ -38,12 +38,53 @@ async function paintHeaderAccount() {
   if (acc) acc.onclick = () => (location.href = href);
 }
 
+function initMobileMenu() {
+  const btnMobileMenu = document.getElementById('btn-mobile-menu');
+  const btnMobileSearch = document.getElementById('btn-mobile-search');
+  const mobileSearch = document.getElementById('mobile-search');
+  const mobileMenu = document.getElementById('mobile-menu');
+  const menuIcon = document.getElementById('menu-icon');
+
+  let isMenuOpen = false;
+  let isSearchOpen = false;
+
+  if (btnMobileMenu && mobileMenu) {
+    btnMobileMenu.addEventListener('click', function (e) {
+      e.stopPropagation();
+      isMenuOpen = !isMenuOpen;
+      mobileMenu.classList.toggle('hidden');
+      if (menuIcon) menuIcon.textContent = isMenuOpen ? 'close' : 'menu';
+      if (isSearchOpen && mobileSearch) { mobileSearch.classList.add('hidden'); isSearchOpen = false; }
+    });
+  }
+
+  if (btnMobileSearch && mobileSearch) {
+    btnMobileSearch.addEventListener('click', function (e) {
+      e.stopPropagation();
+      isSearchOpen = !isSearchOpen;
+      mobileSearch.classList.toggle('hidden');
+      if (isMenuOpen && mobileMenu) { mobileMenu.classList.add('hidden'); if (menuIcon) menuIcon.textContent = 'menu'; isMenuOpen = false; }
+      if (isSearchOpen) setTimeout(() => document.getElementById('mobile-search-input')?.focus(), 100);
+    });
+  }
+
+  document.addEventListener('click', function (e) {
+    if (isMenuOpen && mobileMenu && btnMobileMenu && !mobileMenu.contains(e.target) && !btnMobileMenu.contains(e.target)) {
+      mobileMenu.classList.add('hidden'); if (menuIcon) menuIcon.textContent = 'menu'; isMenuOpen = false;
+    }
+    if (isSearchOpen && mobileSearch && btnMobileSearch && !mobileSearch.contains(e.target) && !btnMobileSearch.contains(e.target)) {
+      mobileSearch.classList.add('hidden'); isSearchOpen = false;
+    }
+  });
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
   await Promise.allSettled([
     inject("#site-header", "/partials/header.html"),
     inject("#site-footer", "/partials/footer.html"),
   ]);
 
+  initMobileMenu();
   updateCartDot();
   await paintHeaderAccount();
 
