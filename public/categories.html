@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Categorías - OzzStore</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@400&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { primary: "#2563eb" },
+                    fontFamily: { display: ["Manrope", "sans-serif"] }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Manrope', sans-serif;
+        }
+
+        .category-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .category-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+        }
+
+        .search-input:focus+.search-icon {
+            color: #2563eb;
+        }
+    </style>
+    <script src="./js/env.js"></script>
+</head>
+
+<body class="bg-slate-50 text-slate-900 min-h-screen">
+    <!-- Header -->
+    <div id="site-header"></div>
+
+    <!-- Hero -->
+    <section
+        class="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white py-20 relative overflow-hidden">
+        <div class="absolute inset-0">
+            <div class="absolute top-0 left-1/4 w-96 h-96 bg-blue-600/20 rounded-full blur-3xl"></div>
+            <div class="absolute bottom-0 right-1/4 w-96 h-96 bg-indigo-600/20 rounded-full blur-3xl"></div>
+        </div>
+        <div class="max-w-7xl mx-auto px-4 relative z-10">
+            <div class="text-center max-w-3xl mx-auto">
+                <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-6">
+                    Explora nuestras <span class="text-blue-400">Categorías</span>
+                </h1>
+                <p class="text-xl text-slate-300 mb-10">
+                    Encuentra exactamente lo que necesitas navegando por nuestra selección organizada
+                </p>
+
+                <!-- Search -->
+                <div class="max-w-xl mx-auto relative">
+                    <input type="text" id="category-search"
+                        class="search-input w-full px-6 py-4 pl-14 rounded-2xl bg-white/10 backdrop-blur border border-white/20 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                        placeholder="Buscar categorías...">
+                    <span
+                        class="search-icon material-symbols-outlined absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 transition-colors">search</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <main class="max-w-7xl mx-auto px-4 py-16">
+        <!-- Stats bar -->
+        <div id="categories-stats"
+            class="hidden flex items-center justify-between mb-10 pb-6 border-b border-slate-200">
+            <div class="flex items-center gap-6">
+                <span id="total-categories" class="text-slate-600">0 categorías</span>
+                <span id="total-products" class="text-slate-600">0 productos</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <button id="view-grid"
+                    class="p-2 rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors">
+                    <span class="material-symbols-outlined">grid_view</span>
+                </button>
+                <button id="view-list" class="p-2 rounded-lg text-slate-400 hover:bg-slate-100 transition-colors">
+                    <span class="material-symbols-outlined">view_list</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Loading -->
+        <div id="categories-loading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div class="bg-white rounded-2xl p-8 animate-pulse border border-slate-200">
+                <div class="w-20 h-20 bg-slate-200 rounded-2xl mb-6"></div>
+                <div class="h-7 bg-slate-200 rounded w-2/3 mb-4"></div>
+                <div class="h-4 bg-slate-100 rounded w-full mb-2"></div>
+                <div class="h-4 bg-slate-100 rounded w-3/4"></div>
+            </div>
+            <div class="bg-white rounded-2xl p-8 animate-pulse border border-slate-200">
+                <div class="w-20 h-20 bg-slate-200 rounded-2xl mb-6"></div>
+                <div class="h-7 bg-slate-200 rounded w-2/3 mb-4"></div>
+                <div class="h-4 bg-slate-100 rounded w-full mb-2"></div>
+                <div class="h-4 bg-slate-100 rounded w-3/4"></div>
+            </div>
+            <div class="bg-white rounded-2xl p-8 animate-pulse border border-slate-200">
+                <div class="w-20 h-20 bg-slate-200 rounded-2xl mb-6"></div>
+                <div class="h-7 bg-slate-200 rounded w-2/3 mb-4"></div>
+                <div class="h-4 bg-slate-100 rounded w-full mb-2"></div>
+                <div class="h-4 bg-slate-100 rounded w-3/4"></div>
+            </div>
+        </div>
+
+        <!-- Categories Grid -->
+        <div id="categories-grid" class="hidden grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
+
+        <!-- No results -->
+        <div id="no-results" class="hidden text-center py-20">
+            <span class="material-symbols-outlined text-6xl text-slate-300 mb-4">search_off</span>
+            <h2 class="text-xl font-bold text-slate-900 mb-2">Sin resultados</h2>
+            <p class="text-slate-500">No encontramos categorías que coincidan con tu búsqueda</p>
+            <button onclick="clearSearch()"
+                class="mt-6 px-6 py-2 bg-primary text-white rounded-lg hover:bg-blue-700 transition-colors">
+                Ver todas
+            </button>
+        </div>
+
+        <!-- Empty state -->
+        <div id="categories-empty" class="hidden text-center py-20">
+            <span class="material-symbols-outlined text-6xl text-slate-300 mb-4">category</span>
+            <h2 class="text-xl font-bold text-slate-900 mb-2">Sin categorías</h2>
+            <p class="text-slate-500">No hay categorías disponibles en este momento</p>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <div id="site-footer"></div>
+
+    <script type="module" src="./js/partials.js"></script>
+    <script type="module">
+        import { supabase } from './js/supabaseClient.js';
+
+        let allCategories = [];
+        let productCounts = {};
+
+        const defaultIcons = {
+            'laptops': 'laptop', 'componentes': 'memory', 'perifericos': 'keyboard',
+            'audio': 'headphones', 'monitores': 'desktop_windows', 'almacenamiento': 'storage',
+            'redes': 'router', 'gaming': 'sports_esports', 'accesorios': 'devices_other'
+        };
+
+        function getIcon(cat) {
+            if (cat.icon) return cat.icon;
+            const slug = cat.slug?.toLowerCase() || '';
+            for (const [key, icon] of Object.entries(defaultIcons)) {
+                if (slug.includes(key)) return icon;
+            }
+            return 'category';
+        }
+
+        window.clearSearch = () => {
+            document.getElementById('category-search').value = '';
+            renderCategories(allCategories);
+        };
+
+        function renderCategories(categories) {
+            const grid = document.getElementById('categories-grid');
+            const noResults = document.getElementById('no-results');
+            const empty = document.getElementById('categories-empty');
+
+            if (!categories.length && allCategories.length) {
+                grid.classList.add('hidden');
+                noResults.classList.remove('hidden');
+                empty.classList.add('hidden');
+                return;
+            }
+
+            if (!categories.length) {
+                grid.classList.add('hidden');
+                noResults.classList.add('hidden');
+                empty.classList.remove('hidden');
+                return;
+            }
+
+            noResults.classList.add('hidden');
+            empty.classList.add('hidden');
+
+            // Group by parent
+            const parents = categories.filter(c => !c.parent_id);
+            const children = categories.filter(c => c.parent_id);
+
+            let html = '';
+
+            parents.forEach(cat => {
+                const color = cat.color_hex || '#2563eb';
+                const icon = getIcon(cat);
+                const count = productCounts[cat.id] || 0;
+                const desc = cat.description || `Explora nuestra selección de ${cat.name}`;
+                const subs = children.filter(c => c.parent_id === cat.id);
+
+                html += `
+          <div class="category-card bg-white rounded-2xl border border-slate-200 overflow-hidden group">
+            <a href="shop.html?category=${cat.slug}" class="block p-8">
+              <div class="flex items-start justify-between mb-6">
+                <div class="w-20 h-20 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110" style="background-color: ${color}15">
+                  <span class="material-symbols-outlined text-4xl" style="color: ${color}">${icon}</span>
+                </div>
+                ${count > 0 ? `<span class="bg-slate-100 text-slate-600 text-sm font-semibold px-3 py-1 rounded-full">${count} productos</span>` : ''}
+              </div>
+              <h3 class="text-xl font-bold text-slate-900 mb-3 group-hover:text-blue-600 transition-colors">${cat.name}</h3>
+              <p class="text-slate-600 text-sm leading-relaxed line-clamp-2">${desc.replace(/</g, '&lt;')}</p>
+            </a>
+            ${subs.length ? `
+              <div class="px-8 pb-6 pt-2 border-t border-slate-100">
+                <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">Subcategorías</p>
+                <div class="flex flex-wrap gap-2">
+                  ${subs.map(sub => `
+                    <a href="shop.html?category=${sub.slug}" class="text-sm px-3 py-1.5 bg-slate-50 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors">${sub.name}</a>
+                  `).join('')}
+                </div>
+              </div>
+            ` : ''}
+            <div class="px-8 pb-6">
+              <a href="shop.html?category=${cat.slug}" class="flex items-center text-blue-600 font-medium text-sm group-hover:gap-3 transition-all">
+                <span>Ver productos</span>
+                <span class="material-symbols-outlined text-lg ml-1">arrow_forward</span>
+              </a>
+            </div>
+          </div>
+        `;
+            });
+
+            grid.innerHTML = html;
+            grid.classList.remove('hidden');
+        }
+
+        async function loadCategories() {
+            const loading = document.getElementById('categories-loading');
+            const stats = document.getElementById('categories-stats');
+
+            try {
+                const storeSlug = window.__ENV?.STORE_SLUG || 'tech-boutique';
+
+                const { data: store } = await supabase
+                    .from('stores')
+                    .select('id')
+                    .eq('slug', storeSlug)
+                    .single();
+
+                if (!store) throw new Error('Store not found');
+
+                // Get categories
+                const { data: categories } = await supabase
+                    .from('categories')
+                    .select('id, name, slug, description, icon, color_hex, parent_id')
+                    .eq('store_id', store.id)
+                    .eq('active', true)
+                    .order('sort', { ascending: true });
+
+                // Get product counts per category
+                const { data: products } = await supabase
+                    .from('products')
+                    .select('id, category_id')
+                    .eq('store_id', store.id)
+                    .eq('active', true);
+
+                products?.forEach(p => {
+                    if (p.category_id) {
+                        productCounts[p.category_id] = (productCounts[p.category_id] || 0) + 1;
+                    }
+                });
+
+                allCategories = categories || [];
+
+                loading.classList.add('hidden');
+
+                // Update stats
+                const totalProducts = Object.values(productCounts).reduce((a, b) => a + b, 0);
+                document.getElementById('total-categories').textContent = `${allCategories.length} categorías`;
+                document.getElementById('total-products').textContent = `${totalProducts} productos`;
+                stats.classList.remove('hidden');
+
+                renderCategories(allCategories);
+
+            } catch (err) {
+                console.error('Error:', err);
+                loading.classList.add('hidden');
+                document.getElementById('categories-empty').classList.remove('hidden');
+            }
+        }
+
+        // Search
+        document.getElementById('category-search').addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase().trim();
+            if (!query) {
+                renderCategories(allCategories);
+                return;
+            }
+            const filtered = allCategories.filter(c =>
+                c.name.toLowerCase().includes(query) ||
+                c.description?.toLowerCase().includes(query)
+            );
+            renderCategories(filtered);
+        });
+
+        loadCategories();
+    </script>
+</body>
+
+</html>

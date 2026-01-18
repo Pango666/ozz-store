@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="es" class="light">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Carrito - TechStore</title>
+
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" crossorigin href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@200..700&display=swap" rel="stylesheet"/>
+
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            primary: "#1313ec",
+            "primary-light": "#e0e0ff",
+            "background-light": "#f6f6f8",
+            "background-dark": "#101022",
+            "surface-light": "#ffffff",
+            "surface-dark": "#1a1a2e",
+          },
+          fontFamily: { display: ["Manrope", "system-ui", "sans-serif"] },
+          borderRadius: { 
+            xl: "0.75rem",
+            "2xl": "1rem" 
+          },
+          boxShadow: {
+            'soft': '0 4px 20px rgba(0, 0, 0, 0.05)',
+            'soft-dark': '0 4px 20px rgba(0, 0, 0, 0.2)',
+          }
+        },
+      },
+    };
+  </script>
+
+  <style>
+    body { font-family: Manrope, system-ui, sans-serif; }
+    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    
+    /* Smooth transitions */
+    * {
+      transition: background-color 0.2s ease, border-color 0.2s ease;
+    }
+    
+    /* Custom scrollbar */
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 10px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #c1c1c1;
+      border-radius: 10px;
+    }
+    .dark .custom-scrollbar::-webkit-scrollbar-track {
+      background: #2d2d42;
+    }
+    .dark .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #555;
+    }
+  </style>
+
+  <script src="./js/env.js"></script>
+</head>
+
+<body class="bg-background-light dark:bg-background-dark text-[#111118] dark:text-white min-h-screen">
+  <!-- HEADER INJECT -->
+  <div id="site-header"></div>
+
+  <main class="max-w-[1440px] mx-auto px-4 sm:px-6 py-8 md:py-12">
+    <!-- Breadcrumb -->
+    <div class="flex items-center gap-2 text-sm md:text-xs font-medium md:font-semibold uppercase tracking-wide md:tracking-wider text-[#616189] dark:text-gray-400 mb-6 md:mb-8">
+      <a href="./index.html" class="hover:text-primary transition-colors duration-200">Inicio</a>
+      <span>›</span>
+      <a href="./shop.html" class="hover:text-primary transition-colors duration-200">Tienda</a>
+      <span>›</span>
+      <span class="text-primary font-semibold">Carrito</span>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-10">
+      <!-- LEFT -->
+      <section class="lg:col-span-7">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 md:mb-8">
+          <div>
+            <h1 class="text-2xl md:text-3xl font-bold md:font-extrabold tracking-tight">Carrito de Compras</h1>
+            <p class="text-sm text-[#616189] dark:text-gray-400 mt-1 md:mt-2">Revisa tus productos y completa el formulario para enviar tu pedido por WhatsApp.</p>
+          </div>
+
+          <button id="btn-clear-cart"
+                  class="hidden px-4 py-2 bg-white dark:bg-surface-dark border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg font-medium text-sm transition-all duration-200 flex items-center gap-2 shadow-sm hover:shadow">
+            <span class="material-symbols-outlined text-base">delete</span>
+            Vaciar carrito
+          </button>
+        </div>
+
+        <!-- Cart Items -->
+        <div id="cart-items-container" class="space-y-4 mb-8">
+          <!-- Los productos del carrito se inyectarán aquí -->
+        </div>
+
+        <!-- Empty State -->
+        <div id="empty-left" class="hidden bg-white dark:bg-surface-dark border border-gray-200 dark:border-gray-800 rounded-2xl p-8 text-center">
+          <div class="w-20 h-20 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4">
+            <span class="material-symbols-outlined text-3xl text-gray-400">shopping_cart</span>
+          </div>
+          <p class="font-bold text-lg mb-2">Tu carrito está vacío</p>
+          <p class="text-gray-500 dark:text-gray-400 mb-6">Añade productos desde la tienda para continuar con tu compra</p>
+          <a href="./shop.html" 
+             class="inline-flex items-center gap-2 px-6 py-3 bg-primary hover:bg-primary/90 text-white font-semibold rounded-lg transition-all duration-200 shadow hover:shadow-md">
+            <span class="material-symbols-outlined">storefront</span>
+            Explorar Tienda
+          </a>
+        </div>
+
+        <!-- Checkout Form -->
+        <div id="checkout-form-container" class="bg-white dark:bg-surface-dark border border-gray-200 dark:border-gray-800 rounded-2xl overflow-hidden shadow-soft dark:shadow-soft-dark">
+          <div class="p-6 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between bg-gray-50 dark:bg-gray-900/50">
+            <div class="flex items-center gap-3">
+              <span class="size-10 rounded-full bg-primary text-white grid place-items-center text-sm font-semibold">
+                <span class="material-symbols-outlined text-lg">person</span>
+              </span>
+              <div>
+                <p class="font-bold">Datos del pedido</p>
+                <p class="text-xs text-gray-500 dark:text-gray-400">Para armar el mensaje de WhatsApp</p>
+              </div>
+            </div>
+            <span class="text-xs font-semibold tracking-wider text-primary bg-white dark:bg-gray-800 px-3 py-1.5 rounded-full">Paso 1/1</span>
+          </div>
+
+          <div class="p-6">
+            <form id="checkout-form" class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+              <div class="md:col-span-2">
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Email <span class="text-gray-500">(opcional)</span></label>
+                <input id="f-email" 
+                       class="w-full bg-gray-50 dark:bg-gray-900/50 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary px-4 py-3 text-sm transition-all duration-200"
+                       placeholder="alex@example.com" 
+                       type="email"/>
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Nombre</label>
+                <input id="f-first" 
+                       class="w-full bg-gray-50 dark:bg-gray-900/50 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary px-4 py-3 text-sm transition-all duration-200"
+                       placeholder="Alex" 
+                       type="text" 
+                       required />
+              </div>
+              
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Apellido</label>
+                <input id="f-last" 
+                       class="w-full bg-gray-50 dark:bg-gray-900/50 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary px-4 py-3 text-sm transition-all duration-200"
+                       placeholder="Smith" 
+                       type="text" 
+                       required />
+              </div>
+
+              <div class="md:col-span-2">
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Dirección <span class="text-gray-500">(opcional)</span></label>
+                <input id="f-address" 
+                       class="w-full bg-gray-50 dark:bg-gray-900/50 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary px-4 py-3 text-sm transition-all duration-200"
+                       placeholder="Zona, calle, nro..." 
+                       type="text"/>
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Ciudad <span class="text-gray-500">(opcional)</span></label>
+                <input id="f-city" 
+                       class="w-full bg-gray-50 dark:bg-gray-900/50 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary px-4 py-3 text-sm transition-all duration-200"
+                       placeholder="La Paz" 
+                       type="text"/>
+              </div>
+              
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Referencia <span class="text-gray-500">(opcional)</span></label>
+                <input id="f-zip" 
+                       class="w-full bg-gray-50 dark:bg-gray-900/50 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary px-4 py-3 text-sm transition-all duration-200"
+                       placeholder="Edificio / piso / etc" 
+                       type="text"/>
+              </div>
+
+              <div class="md:col-span-2">
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Notas <span class="text-gray-500">(opcional)</span></label>
+                <textarea id="f-notes" 
+                          rows="3"
+                          class="w-full bg-gray-50 dark:bg-gray-900/50 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary px-4 py-3 text-sm transition-all duration-200 resize-none custom-scrollbar"
+                          placeholder="Ej: quiero entrega hoy / color alternativo / etc"></textarea>
+              </div>
+
+              <div class="md:col-span-2 pt-2">
+                <button id="btn-whatsapp-checkout"
+                        class="w-full bg-primary hover:bg-primary/90 text-white font-semibold py-4 rounded-lg transition-all duration-200 text-sm tracking-wide disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-3 shadow-lg hover:shadow-xl active:scale-[0.98]">
+                  <span class="material-symbols-outlined">whatsapp</span>
+                  ENVIAR PEDIDO POR WHATSAPP
+                </button>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-3 text-center">
+                  Se abrirá WhatsApp con el pedido armado para enviar.
+                </p>
+              </div>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <!-- RIGHT -->
+      <aside class="lg:col-span-5">
+        <div class="sticky top-24 space-y-6">
+          <div class="bg-white dark:bg-surface-dark border border-gray-200 dark:border-gray-800 rounded-2xl p-6 shadow-soft dark:shadow-soft-dark">
+            <div class="flex items-center justify-between mb-6">
+              <h3 class="text-lg font-bold">Resumen del pedido</h3>
+              <span id="items-count" class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 px-3 py-1 rounded-full">—</span>
+            </div>
+
+            <div id="cart-items" class="space-y-4 mb-6 max-h-64 overflow-y-auto pr-2 custom-scrollbar">
+              <!-- Los productos del carrito se inyectarán aquí también -->
+            </div>
+
+            <div class="border-t border-gray-200 dark:border-gray-800 pt-5 space-y-4">
+              <div class="flex justify-between items-center">
+                <span class="text-sm text-gray-600 dark:text-gray-400">Subtotal</span>
+                <span id="subtotal" class="font-bold text-base">Bs 0.00</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-sm text-gray-600 dark:text-gray-400">Envío</span>
+                <span class="text-sm text-gray-600 dark:text-gray-400">A coordinar</span>
+              </div>
+              <div class="flex justify-between items-center border-t border-gray-200 dark:border-gray-800 pt-4 mt-2">
+                <span class="text-lg font-bold">Total</span>
+                <span id="total" class="text-xl font-bold text-primary">Bs 0.00</span>
+              </div>
+            </div>
+
+            <div class="mt-6 flex flex-col sm:flex-row gap-3">
+              <a href="./shop.html"
+                 class="flex-1 px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 font-semibold text-sm text-center hover:bg-gray-50 dark:hover:bg-gray-800 transition-all duration-200 flex items-center justify-center gap-2 order-2 sm:order-1">
+                <span class="material-symbols-outlined">arrow_back</span>
+                Seguir comprando
+              </a>
+              <button id="btn-go-whatsapp"
+                      class="flex-1 px-4 py-3 rounded-lg bg-primary text-white font-semibold text-sm hover:bg-primary/90 transition-all duration-200 disabled:opacity-60 flex items-center justify-center gap-2 order-1 sm:order-2 shadow hover:shadow-md">
+                <span class="material-symbols-outlined">whatsapp</span>
+                WhatsApp
+              </button>
+            </div>
+          </div>
+
+          <div id="state-box" class="hidden bg-white dark:bg-surface-dark border border-gray-200 dark:border-gray-800 rounded-xl p-4 text-sm shadow-sm"></div>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <!-- FOOTER INJECT -->
+  <div id="site-footer"></div>
+
+  <!-- ✅ INYECTOR CORRECTO -->
+  <script type="module" src="./js/partials.js"></script>
+
+  <!-- cart logic -->
+  <script type="module" src="./js/pages/cart.js"></script>
+</body>
+</html>

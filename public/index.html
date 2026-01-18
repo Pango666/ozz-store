@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html class="light" lang="es">
+
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>TechStore | Componentes y Tecnología</title>
+
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@200..700&display=swap"
+    rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&display=swap"
+    rel="stylesheet" />
+
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#1313ec",
+            "primary-hover": "#0f0fc7",
+            "primary-light": "#e8e8ff",
+            "asus-red": "#FF0000",
+            "corsair-blue": "#00A8E8",
+            "logitech-blue": "#0078D4",
+            "nvidia-green": "#76B900",
+            "amd-red": "#ED1C24",
+            "intel-blue": "#0071C5",
+            "background-light": "#f6f6f8",
+            "background-dark": "#0a0a1a",
+            "surface-light": "#ffffff",
+            "surface-dark": "#15152a",
+            "border-light": "#e5e7eb",
+            "border-dark": "#2d2d42",
+            "card-dark": "#1a1a2e",
+          },
+          fontFamily: { "display": ["Manrope", "sans-serif"] },
+          borderRadius: {
+            "DEFAULT": "0.75rem",
+            "lg": "1rem",
+            "xl": "1.25rem",
+            "2xl": "1.5rem",
+            "full": "9999px"
+          },
+          animation: {
+            'fade-in': 'fadeIn 0.6s ease-out',
+            'slide-up': 'slideUp 0.5s ease-out',
+            'float': 'float 3s ease-in-out infinite',
+            'pulse-glow': 'pulseGlow 2s ease-in-out infinite',
+            'shimmer': 'shimmer 2s infinite linear',
+            'marquee': 'marquee 25s linear infinite',
+          },
+          keyframes: {
+            fadeIn: {
+              '0%': { opacity: '0', transform: 'translateY(20px)' },
+              '100%': { opacity: '1', transform: 'translateY(0)' },
+            },
+            slideUp: {
+              '0%': { transform: 'translateY(40px)', opacity: '0' },
+              '100%': { transform: 'translateY(0)', opacity: '1' },
+            },
+            float: {
+              '0%, 100%': { transform: 'translateY(0)' },
+              '50%': { transform: 'translateY(-10px)' },
+            },
+            pulseGlow: {
+              '0%, 100%': { boxShadow: '0 0 20px rgba(19, 19, 236, 0.1)' },
+              '50%': { boxShadow: '0 0 30px rgba(19, 19, 236, 0.2)' },
+            },
+            shimmer: {
+              '0%': { backgroundPosition: '-200% 0' },
+              '100%': { backgroundPosition: '200% 0' },
+            },
+            marquee: {
+              '0%': { transform: 'translateX(0)' },
+              '100%': { transform: 'translateX(-50%)' },
+            }
+          },
+          boxShadow: {
+            'card': '0 8px 30px rgba(0, 0, 0, 0.08)',
+            'card-hover': '0 20px 50px rgba(0, 0, 0, 0.15)',
+            'card-dark': '0 8px 30px rgba(0, 0, 0, 0.25)',
+            'card-dark-hover': '0 20px 50px rgba(0, 0, 0, 0.4)',
+            'glow': '0 0 40px rgba(19, 19, 236, 0.15)',
+            'glow-dark': '0 0 40px rgba(19, 19, 236, 0.25)',
+            'inner-glow': 'inset 0 2px 20px rgba(19, 19, 236, 0.1)',
+          },
+          backgroundImage: {
+            'gradient-tech': 'linear-gradient(135deg, #1313ec 0%, #8b5cf6 50%, #3b82f6 100%)',
+            'gradient-dark': 'linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%)',
+          }
+        },
+      },
+    }
+  </script>
+
+  <style>
+    body {
+      font-family: 'Manrope', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      scroll-behavior: smooth;
+    }
+
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+
+    .gradient-text {
+      background: linear-gradient(135deg, #1313ec 0%, #8b5cf6 50%, #3b82f6 100%);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: gradient 3s ease infinite;
+    }
+
+    @keyframes gradient {
+      0% {
+        background-position: 0% 50%;
+      }
+
+      50% {
+        background-position: 100% 50%;
+      }
+
+      100% {
+        background-position: 0% 50%;
+      }
+    }
+
+    .neon-glow {
+      box-shadow: 0 0 10px rgba(19, 19, 236, 0.5),
+        0 0 20px rgba(19, 19, 236, 0.3),
+        0 0 30px rgba(19, 19, 236, 0.1);
+    }
+
+    .dark .neon-glow {
+      box-shadow: 0 0 15px rgba(19, 19, 236, 0.7),
+        0 0 25px rgba(19, 19, 236, 0.5),
+        0 0 35px rgba(19, 19, 236, 0.3);
+    }
+
+    .product-card {
+      background: rgba(255, 255, 255, 1);
+      border: 1px solid #e5e7eb;
+      border-radius: 0.75rem;
+      overflow: hidden;
+      transition: transform .3s, box-shadow .3s, border-color .3s;
+    }
+
+    .dark .product-card {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 255, 255, 0.10);
+    }
+
+    .product-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+      border-color: rgba(19, 19, 236, 0.3);
+    }
+
+    .brand-card {
+      background: #fff;
+      border: 2px solid #e5e7eb;
+      border-radius: 0.75rem;
+      padding: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform .3s, box-shadow .3s, border-color .3s;
+    }
+
+    .dark .brand-card {
+      background: #1a1a2e;
+      border-color: #2d2d42;
+    }
+
+    .brand-card:hover {
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+      border-color: rgba(19, 19, 236, 0.35);
+    }
+
+    .tech-grid-bg {
+      background-image:
+        linear-gradient(rgba(19, 19, 236, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(19, 19, 236, 0.05) 1px, transparent 1px);
+      background-size: 50px 50px;
+    }
+
+    .dark .tech-grid-bg {
+      background-image:
+        linear-gradient(rgba(100, 100, 255, 0.10) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(100, 100, 255, 0.10) 1px, transparent 1px);
+    }
+
+    .skeleton {
+      background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+    }
+
+    .dark .skeleton {
+      background: linear-gradient(90deg, #2d2d42 25%, #3d3d52 50%, #2d2d42 75%);
+      background-size: 200% 100%;
+    }
+  </style>
+
+  <!-- ✅ IMPORTANTÍSIMO: esto arregla SUPABASE_URL / ANON_KEY -->
+  <script src="./js/env.js"></script>
+</head>
+
+<body
+  class="bg-background-light dark:bg-background-dark text-gray-900 dark:text-gray-100 transition-colors duration-500 min-h-screen">
+
+  <!-- HEADER INJECT -->
+  <div id="site-header"></div>
+
+  <main class="w-full">
+    <!-- Contenido principal -->
+    <div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
+
+      <!-- Hero section con tema gaming/tecnología -->
+      <section class="py-12 md:py-24 lg:py-28 relative overflow-hidden">
+        <div class="absolute inset-0 tech-grid-bg opacity-50"></div>
+        <div class="absolute top-20 left-10 w-72 h-72 bg-primary/5 rounded-full blur-3xl"></div>
+        <div class="absolute bottom-20 right-10 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl"></div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center relative z-10">
+          <div class="lg:col-span-6 order-2 lg:order-1 space-y-6 animate-fade-in">
+            <div
+              class="inline-flex items-center gap-2 bg-gradient-to-r from-primary/10 to-purple-500/10 px-4 py-2 rounded-full border border-primary/20">
+              <span class="relative flex h-2 w-2">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+              </span>
+              <span class="text-primary font-bold tracking-[0.2em] uppercase text-xs">GAMING & WORKSTATION</span>
+            </div>
+
+            <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black leading-[1.1] tracking-tight">
+              Componentes <span class="gradient-text">Premium</span><br>para tu Setup
+            </h1>
+
+            <p class="text-lg text-gray-600 dark:text-gray-300 leading-relaxed max-w-lg">
+              Encuentra los mejores componentes de tecnología: GPUs, CPUs, periféricos gaming, almacenamiento y más.
+              Performance garantizada.
+            </p>
+
+            <div class="flex flex-wrap gap-4 pt-2">
+              <a href="shop.html"
+                class="group bg-gradient-tech text-white px-8 py-4 rounded-xl font-bold hover:shadow-glow dark:hover:shadow-glow-dark transition-all duration-300 flex items-center gap-3 overflow-hidden relative">
+                <span class="relative z-10">Ver Catálogo Completo</span>
+                <span
+                  class="material-symbols-outlined relative z-10 group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                <div
+                  class="absolute inset-0 bg-gradient-to-r from-primary-hover to-purple-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                </div>
+              </a>
+
+              <a href="#brands"
+                class="group bg-surface-light dark:bg-surface-dark border-2 border-gray-300 dark:border-gray-700 px-8 py-4 rounded-xl font-bold hover:border-primary/30 dark:hover:border-primary/50 transition-all duration-300 hover:shadow-card dark:hover:shadow-card-dark flex items-center gap-3">
+                <span>Explorar Marcas</span>
+                <span
+                  class="material-symbols-outlined group-hover:rotate-90 transition-transform">expand_circle_down</span>
+              </a>
+            </div>
+
+            <div class="grid grid-cols-3 gap-4 pt-8">
+              <div class="text-center p-3 rounded-lg bg-white/50 dark:bg-white/5 backdrop-blur-sm">
+                <div class="text-2xl font-bold text-primary">240Hz</div>
+                <div class="text-xs text-gray-600 dark:text-gray-400">Monitores</div>
+              </div>
+              <div class="text-center p-3 rounded-lg bg-white/50 dark:bg-white/5 backdrop-blur-sm">
+                <div class="text-2xl font-bold text-primary">RTX</div>
+                <div class="text-xs text-gray-600 dark:text-gray-400">GPUs</div>
+              </div>
+              <div class="text-center p-3 rounded-lg bg-white/50 dark:bg-white/5 backdrop-blur-sm">
+                <div class="text-2xl font-bold text-primary">RGB</div>
+                <div class="text-xs text-gray-600 dark:text-gray-400">Customizable</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="lg:col-span-6 order-1 lg:order-2">
+            <div class="relative animate-float">
+              <div
+                class="absolute -inset-4 bg-gradient-to-r from-primary/20 via-transparent to-purple-500/20 rounded-2xl rotate-3 blur-xl">
+              </div>
+
+              <div class="relative overflow-hidden rounded-2xl border-2 border-primary/20 neon-glow">
+                <div class="aspect-[4/3] bg-cover bg-center transition-transform duration-700 hover:scale-105"
+                  style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCENDFStIYfEAa3Hli-Ebdi8OrGolUcBgZsSCU0qgt8OsTqxlh2NitID-LO4KLgLewO_DdL0jf4kTK2sHvTXeEDEA2RFKRq4PMGnNlUPMahbguWNvrn-Dzx44QmWlNm_6V7hol8kvDCz2ZVLBOjbEblPNbGde0eqa7IjXWtJmfINzBfhxyP1IEZ3mGs1t2CRbzHgc93VJmwr85FMoRNBqjf9vgdflU4wA8KEkoFqs9RtmiLAVZcV4-QQjtTxOxzqA6Reo91gaTZFA");'>
+                </div>
+
+                <div
+                  class="absolute top-4 left-4 bg-black/80 backdrop-blur-sm px-3 py-1.5 rounded-full flex items-center gap-2">
+                  <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                  <span class="text-xs font-bold text-white">RTX 4080 + Ryzen 9</span>
+                </div>
+              </div>
+
+              <div
+                class="absolute -bottom-3 -right-3 w-24 h-24 bg-gradient-to-br from-primary/20 to-transparent rounded-full blur-md">
+              </div>
+              <div
+                class="absolute -top-3 -left-3 w-32 h-32 bg-gradient-to-tr from-purple-500/20 to-transparent rounded-full blur-md">
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Marcas -->
+      <section id="brands" class="py-16 md:py-20 mb-16 md:mb-24 animate-fade-in">
+        <div class="text-center mb-12">
+          <div class="inline-flex items-center gap-3 mb-4">
+            <div class="h-px w-8 bg-gradient-to-r from-transparent to-primary"></div>
+            <h2 class="text-3xl md:text-4xl font-bold">Marcas Destacadas</h2>
+            <div class="h-px w-8 bg-gradient-to-l from-transparent to-primary"></div>
+          </div>
+          <p class="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+            Trabajamos con los principales fabricantes de componentes y periféricos gaming
+          </p>
+        </div>
+
+        <div id="home-brands-container" class="relative">
+          <!-- Brands Carousel will be injected here -->
+          <div class="product-card p-6 md:p-8 animate-pulse text-center">
+            Cargando marcas...
+          </div>
+        </div>
+
+        <div class="mt-12 relative overflow-hidden">
+          <div
+            class="absolute inset-0 bg-gradient-to-r from-white via-transparent to-white dark:from-background-dark dark:via-transparent dark:to-background-dark z-10">
+          </div>
+          <div class="flex animate-marquee space-x-8">
+            <span class="text-gray-400 dark:text-gray-600 font-bold text-lg">RAZER</span>
+            <span class="text-gray-400 dark:text-gray-600 font-bold text-lg">MSI</span>
+            <span class="text-gray-400 dark:text-gray-600 font-bold text-lg">GIGABYTE</span>
+            <span class="text-gray-400 dark:text-gray-600 font-bold text-lg">SAMSUNG</span>
+            <span class="text-gray-400 dark:text-gray-600 font-bold text-lg">KINGSTON</span>
+            <span class="text-gray-400 dark:text-gray-600 font-bold text-lg">COOLER MASTER</span>
+            <span class="text-gray-400 dark:text-gray-600 font-bold text-lg">SEAGATE</span>
+            <span class="text-gray-400 dark:text-gray-600 font-bold text-lg">WESTERN DIGITAL</span>
+            <span class="text-gray-400 dark:text-gray-600 font-bold text-lg">RAZER</span>
+            <span class="text-gray-400 dark:text-gray-600 font-bold text-lg">MSI</span>
+            <span class="text-gray-400 dark:text-gray-600 font-bold text-lg">GIGABYTE</span>
+            <span class="text-gray-400 dark:text-gray-600 font-bold text-lg">SAMSUNG</span>
+            <span class="text-gray-400 dark:text-gray-600 font-bold text-lg">KINGSTON</span>
+            <span class="text-gray-400 dark:text-gray-600 font-bold text-lg">COOLER MASTER</span>
+            <span class="text-gray-400 dark:text-gray-600 font-bold text-lg">SEAGATE</span>
+            <span class="text-gray-400 dark:text-gray-600 font-bold text-lg">WESTERN DIGITAL</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Categorías dinámicas -->
+      <section class="py-16 md:py-20 mb-16 md:mb-24 animate-slide-up">
+        <div class="text-center mb-12">
+          <h2 class="text-3xl md:text-4xl font-bold mb-4">Categorías de Componentes</h2>
+          <p class="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+            Encuentra exactamente lo que necesitas para tu setup
+          </p>
+        </div>
+
+        <!-- ✅ home.js llena esto con categorías REALES -->
+        <div id="home-categories-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+          <!-- skeleton -->
+          <div class="product-card p-6 md:p-8 animate-pulse">
+            <div class="skeleton rounded-xl h-12 w-12 mb-6"></div>
+            <div class="skeleton h-5 w-2/3 rounded mb-3"></div>
+            <div class="skeleton h-4 w-full rounded mb-2"></div>
+            <div class="skeleton h-4 w-5/6 rounded"></div>
+          </div>
+          <div class="product-card p-6 md:p-8 animate-pulse">
+            <div class="skeleton rounded-xl h-12 w-12 mb-6"></div>
+            <div class="skeleton h-5 w-2/3 rounded mb-3"></div>
+            <div class="skeleton h-4 w-full rounded mb-2"></div>
+            <div class="skeleton h-4 w-5/6 rounded"></div>
+          </div>
+          <div class="product-card p-6 md:p-8 animate-pulse">
+            <div class="skeleton rounded-xl h-12 w-12 mb-6"></div>
+            <div class="skeleton h-5 w-2/3 rounded mb-3"></div>
+            <div class="skeleton h-4 w-full rounded mb-2"></div>
+            <div class="skeleton h-4 w-5/6 rounded"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Especialistas -->
+      <section class="py-16 md:py-20 mb-16 md:mb-24 bg-gradient-dark rounded-3xl p-8 md:p-12">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+          <div>
+            <h2 class="text-3xl md:text-4xl font-bold mb-6 text-white">Tecnología con precio justo y calidad real</h2>
+            <p class="text-gray-300 mb-8">
+              Somos una tienda que está creciendo fuerte: ya nos conocen por <span class="font-bold">precios
+                competitivos</span>,
+              <span class="font-bold">productos originales</span> y una atención que sí resuelve.
+              Te ayudamos a elegir componentes compatibles para que tu compra sea segura y sin sorpresas.
+            </p>
+
+            <div class="space-y-6">
+              <div class="flex items-start gap-4">
+                <div class="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
+                  <span class="material-symbols-outlined text-primary">verified</span>
+                </div>
+                <div>
+                  <h4 class="font-bold text-white mb-1">Productos verificados</h4>
+                  <p class="text-gray-400 text-sm">Revisamos y validamos antes de entregar.</p>
+                </div>
+              </div>
+
+              <div class="flex items-start gap-4">
+                <div class="w-10 h-10 rounded-full bg-green-500/20 flex items-center justify-center flex-shrink-0">
+                  <span class="material-symbols-outlined text-green-500">local_fire_department</span>
+                </div>
+                <div>
+                  <h4 class="font-bold text-white mb-1">Mejor valor por tu dinero</h4>
+                  <p class="text-gray-400 text-sm">Calidad y precio sin inflar, con recomendaciones honestas.</p>
+                </div>
+              </div>
+
+              <div class="flex items-start gap-4">
+                <div class="w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center flex-shrink-0">
+                  <span class="material-symbols-outlined text-purple-500">support_agent</span>
+                </div>
+                <div>
+                  <h4 class="font-bold text-white mb-1">Soporte y compatibilidad</h4>
+                  <p class="text-gray-400 text-sm">Te ayudamos con armado, upgrades y dudas de compatibilidad.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="relative">
+            <div class="aspect-[4/3] rounded-2xl overflow-hidden border-2 border-primary/30">
+              <div class="absolute inset-0 bg-gradient-to-tr from-primary/20 to-transparent"></div>
+              <div class="absolute inset-0 bg-cover bg-center"
+                style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCKCYlOV7tDMQXhSahyry_0IcOdDSzhRSGH3ytK7-ybM1bNoBfFhgeNGNM1WDw05EmUMV_zpE4eexuPJ44-gAkuKHBb3guZVznLIuE72rWwCKtcx1NNa1AiaCcjnUKbKJKwOcYLiRFor_0jrkn0UW80au-EQve8NG-Fo0quO5FpywpE47TdzBAcLmqdVaF1ri7xJ6KKH3pBNfR0ZKrMhL4hMOu1HVi8pFSqQHObWZadbx3ZfVi6_o8Lb0pQlrJyAwjnmKsSRjmmuQ");'>
+              </div>
+            </div>
+
+            <div
+              class="absolute -bottom-6 left-1/2 transform -translate-x-1/2 w-4/5 bg-black/80 backdrop-blur-sm rounded-xl p-4 flex justify-around">
+              <div class="text-center">
+                <div class="text-2xl font-bold text-white">1K+</div>
+                <div class="text-xs text-gray-400">Clientes</div>
+              </div>
+              <div class="text-center">
+                <div class="text-2xl font-bold text-white">Top</div>
+                <div class="text-xs text-gray-400">Precios</div>
+              </div>
+              <div class="text-center">
+                <div class="text-2xl font-bold text-white">Original</div>
+                <div class="text-xs text-gray-400">Calidad</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- Destacados (home.js lo convierte a carrusel) -->
+    <section class="mb-20 md:mb-28 px-4 md:px-8" id="home-sections">
+      <div class="max-w-[1400px] mx-auto">
+        <div class="text-center py-10 md:py-16">
+          <div class="inline-flex flex-col items-center gap-4 mb-10 md:mb-12">
+            <div class="flex items-center gap-3">
+              <div class="h-px w-12 bg-gradient-to-r from-transparent to-primary"></div>
+              <h2 class="text-3xl md:text-4xl font-bold">Productos en Destacado</h2>
+              <div class="h-px w-12 bg-gradient-to-l from-transparent to-primary"></div>
+            </div>
+            <p class="text-lg text-gray-600 dark:text-gray-400 max-w-2xl">
+              Los componentes más vendidos y mejor valorados por nuestra comunidad
+            </p>
+          </div>
+
+          <div id="home-loading-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+            <div class="product-card p-4 animate-pulse">
+              <div class="skeleton rounded-lg h-48 mb-4"></div>
+              <div class="skeleton h-4 rounded mb-2 w-3/4"></div>
+              <div class="skeleton h-4 rounded mb-4 w-1/2"></div>
+              <div class="skeleton h-10 rounded"></div>
+            </div>
+            <div class="product-card p-4 animate-pulse" style="animation-delay: 0.1s">
+              <div class="skeleton rounded-lg h-48 mb-4"></div>
+              <div class="skeleton h-4 rounded mb-2 w-3/4"></div>
+              <div class="skeleton h-4 rounded mb-4 w-1/2"></div>
+              <div class="skeleton h-10 rounded"></div>
+            </div>
+            <div class="product-card p-4 animate-pulse" style="animation-delay: 0.2s">
+              <div class="skeleton rounded-lg h-48 mb-4"></div>
+              <div class="skeleton h-4 rounded mb-2 w-3/4"></div>
+              <div class="skeleton h-4 rounded mb-4 w-1/2"></div>
+              <div class="skeleton h-10 rounded"></div>
+            </div>
+            <div class="product-card p-4 animate-pulse" style="animation-delay: 0.3s">
+              <div class="skeleton rounded-lg h-48 mb-4"></div>
+              <div class="skeleton h-4 rounded mb-2 w-3/4"></div>
+              <div class="skeleton h-4 rounded mb-4 w-1/2"></div>
+              <div class="skeleton h-10 rounded"></div>
+            </div>
+          </div>
+
+          <div id="home-loading-hint" class="mt-12 flex flex-col items-center gap-4">
+            <div class="flex items-center gap-2">
+              <div class="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
+              <div class="w-2 h-2 bg-primary rounded-full animate-pulse" style="animation-delay: 0.2s"></div>
+              <div class="w-2 h-2 bg-primary rounded-full animate-pulse" style="animation-delay: 0.4s"></div>
+            </div>
+            <p class="text-gray-500 dark:text-gray-400 text-sm md:text-base">Cargando los mejores componentes para ti...
+            </p>
+          </div>
+
+          <div id="home-error" class="hidden mt-8 text-sm text-red-600 dark:text-red-300"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- FOOTER INJECT -->
+  <div id="site-footer"></div>
+
+  <!-- Botón flotante carrito -->
+  <div class="fixed bottom-6 right-6 z-40">
+    <a href="cart.html"
+      class="group w-14 h-14 bg-gradient-tech rounded-full flex items-center justify-center shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-110 animate-pulse-glow relative">
+      <span class="material-symbols-outlined text-white text-2xl">shopping_cart</span>
+      <span id="fab-cart-badge"
+        class="hidden absolute -top-2 -right-2 w-6 h-6 bg-red-500 rounded-full flex items-center justify-center text-xs text-white font-bold">
+        0
+      </span>
+    </a>
+  </div>
+
+  <script type="module" src="./js/partials.js"></script>
+  <script type="module" src="./js/pages/home.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="es" class="light">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tienda - TechStore</title>
+
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            primary: "#1313ec",
+            "primary-hover": "#0f0fc7",
+            "primary-light": "#e8e8ff",
+            "secondary": "#8b5cf6",
+            "background-light": "#f6f6f8",
+            "background-dark": "#0a0a1a",
+            "surface-light": "#ffffff",
+            "surface-dark": "#15152a",
+            "border-light": "#e5e7eb",
+            "border-dark": "#2d2d42",
+            "card-dark": "#1a1a2e",
+            "text-muted": "#6b7280",
+            "text-muted-dark": "#9ca3af"
+          },
+          fontFamily: { display: ["Manrope", "system-ui", "sans-serif"] },
+          borderRadius: { 
+            "DEFAULT": "0.75rem",
+            "lg": "1rem",
+            "xl": "1.25rem",
+            "2xl": "1.5rem" 
+          },
+          animation: {
+            'fade-in': 'fadeIn 0.5s ease-out',
+            'slide-up': 'slideUp 0.4s ease-out',
+            'shimmer': 'shimmer 2s infinite linear',
+          },
+          keyframes: {
+            fadeIn: {
+              '0%': { opacity: '0', transform: 'translateY(10px)' },
+              '100%': { opacity: '1', transform: 'translateY(0)' },
+            },
+            slideUp: {
+              '0%': { transform: 'translateY(20px)', opacity: '0' },
+              '100%': { transform: 'translateY(0)', opacity: '1' },
+            },
+            shimmer: {
+              '0%': { backgroundPosition: '-200% 0' },
+              '100%': { backgroundPosition: '200% 0' },
+            }
+          },
+          boxShadow: {
+            'card': '0 8px 30px rgba(0, 0, 0, 0.08)',
+            'card-hover': '0 20px 50px rgba(0, 0, 0, 0.15)',
+            'card-dark': '0 8px 30px rgba(0, 0, 0, 0.25)',
+            'card-dark-hover': '0 20px 50px rgba(0, 0, 0, 0.4)',
+            'glow': '0 0 30px rgba(19, 19, 236, 0.1)',
+            'glow-dark': '0 0 30px rgba(19, 19, 236, 0.2)',
+          }
+        },
+      },
+    };
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" crossorigin href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@200..700&display=swap" rel="stylesheet"/>
+
+  <style>
+    body { 
+      font-family: Manrope, system-ui, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      scroll-behavior: smooth;
+    }
+    
+    ::-webkit-scrollbar { width: 10px; }
+    ::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 5px; }
+    .dark ::-webkit-scrollbar-track { background: #1a1a2e; }
+    ::-webkit-scrollbar-thumb {
+      background: linear-gradient(135deg, #1313ec 0%, #8b5cf6 100%);
+      border-radius: 5px;
+      border: 2px solid #f1f1f1;
+    }
+    .dark ::-webkit-scrollbar-thumb { border: 2px solid #1a1a2e; }
+
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    
+    .product-card {
+      @apply bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark 
+             rounded-xl overflow-hidden transition-all duration-300 hover:shadow-card-hover 
+             dark:hover:shadow-card-dark-hover hover:-translate-y-1 hover:border-primary/20 
+             dark:hover:border-primary/40;
+    }
+    .product-card:hover .quick-actions { opacity: 1; transform: translateY(0); }
+    .quick-actions { opacity: 0; transform: translateY(10px); transition: all .25s ease; }
+    
+    .filter-item {
+      @apply flex items-center justify-between py-2 px-3 rounded-lg hover:bg-primary/5 
+             dark:hover:bg-primary/10 transition-colors duration-200 cursor-pointer;
+    }
+    .filter-item.active { @apply bg-primary/10 dark:bg-primary/20 text-primary font-semibold; }
+    
+    .skeleton {
+      background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+    }
+    .dark .skeleton {
+      background: linear-gradient(90deg, #2d2d42 25%, #3d3d52 50%, #2d2d42 75%);
+      background-size: 200% 100%;
+    }
+    
+    .badge { @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium; }
+    .badge-primary { @apply bg-primary/10 text-primary; }
+    .badge-secondary { @apply bg-secondary/10 text-secondary; }
+    
+    .btn-primary {
+      @apply bg-primary hover:bg-primary-hover text-white font-semibold py-2.5 px-5 rounded-lg
+             transition-all duration-300 hover:shadow-glow dark:hover:shadow-glow-dark
+             active:scale-[0.98] flex items-center justify-center gap-2;
+    }
+    
+    .btn-secondary {
+      @apply bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark
+             hover:border-primary/30 dark:hover:border-primary/50 text-gray-800 dark:text-gray-200
+             font-semibold py-2.5 px-5 rounded-lg transition-all duration-300
+             hover:shadow-card active:scale-[0.98] flex items-center justify-center gap-2;
+    }
+    
+    select.custom-select {
+      @apply appearance-none bg-surface-light dark:bg-surface-dark border border-border-light 
+             dark:border-border-dark rounded-lg py-2.5 pl-4 pr-10 text-sm font-semibold 
+             focus:ring-2 focus:ring-primary/20 focus:border-primary/30 w-full;
+    }
+    
+    :focus-visible {
+      outline: 2px solid #1313ec;
+      outline-offset: 2px;
+      border-radius: 4px;
+    }
+  </style>
+
+  <script src="./js/env.js"></script>
+</head>
+
+<body class="bg-background-light dark:bg-background-dark text-gray-900 dark:text-gray-100 min-h-screen transition-colors duration-300">
+  <!-- HEADER INJECT -->
+  <div id="site-header"></div>
+
+  <main class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-10">
+    <div class="flex flex-col lg:flex-row gap-8">
+      <!-- SIDEBAR - Filtros -->
+      <aside class="lg:w-80 xl:w-96 shrink-0">
+        <div class="sticky top-28 space-y-8 animate-fade-in">
+          <!-- Encabezado filtros -->
+          <div class="bg-surface-light dark:bg-surface-dark rounded-2xl p-6 shadow-card dark:shadow-card-dark">
+            <div class="flex items-center justify-between mb-6">
+              <h3 class="text-lg font-bold">Filtros</h3>
+              <div class="flex items-center gap-2">
+                <span id="product-count" class="text-sm text-text-muted dark:text-text-muted-dark">0 productos</span>
+              </div>
+            </div>
+
+            <div id="active-filters" class="flex flex-wrap gap-2 mb-4"></div>
+
+            <button id="clear-all" class="hidden btn-secondary text-sm py-1.5 px-3 w-full">
+              <span class="material-symbols-outlined text-sm">close</span>
+              Limpiar todos los filtros
+            </button>
+          </div>
+
+          <!-- Filtro de categorías -->
+          <div class="bg-surface-light dark:bg-surface-dark rounded-2xl p-6 shadow-card dark:shadow-card-dark">
+            <div class="flex items-center justify-between mb-4">
+              <h4 class="font-bold">Categorías</h4>
+              <span class="material-symbols-outlined text-text-muted dark:text-text-muted-dark text-lg">category</span>
+            </div>
+            <div id="category-filters" class="space-y-2">
+              <div class="skeleton h-8 rounded-lg"></div>
+              <div class="skeleton h-8 rounded-lg"></div>
+              <div class="skeleton h-8 rounded-lg"></div>
+            </div>
+            <p class="mt-4 text-xs text-text-muted dark:text-text-muted-dark">
+              * Solo se listan categorías con productos activos.
+            </p>
+          </div>
+
+          <!-- ✅ Filtro de marcas (NECESARIO para que se vea) -->
+          <div class="bg-surface-light dark:bg-surface-dark rounded-2xl p-6 shadow-card dark:shadow-card-dark">
+            <div class="flex items-center justify-between mb-4">
+              <h4 class="font-bold">Marcas</h4>
+              <span class="material-symbols-outlined text-text-muted dark:text-text-muted-dark text-lg">loyalty</span>
+            </div>
+
+            <!-- ✅ shop.js llena esto -->
+            <div id="brand-filters" class="space-y-2">
+              <div class="skeleton h-8 rounded-lg"></div>
+              <div class="skeleton h-8 rounded-lg"></div>
+              <div class="skeleton h-8 rounded-lg"></div>
+            </div>
+
+            <p class="mt-4 text-xs text-text-muted dark:text-text-muted-dark">
+              * Solo se listan marcas con productos activos.
+            </p>
+          </div>
+
+          <!-- Más filtros (especificaciones) -->
+          <div id="spec-facets-wrap" class="hidden bg-surface-light dark:bg-surface-dark rounded-2xl p-6 shadow-card dark:shadow-card-dark">
+            <div class="flex items-center justify-between mb-4">
+              <h4 class="font-bold">Especificaciones</h4>
+              <span class="material-symbols-outlined text-text-muted dark:text-text-muted-dark text-lg">tune</span>
+            </div>
+            <div id="spec-facets" class="space-y-6"></div>
+          </div>
+
+          <!-- Nota informativa -->
+          <div class="bg-gradient-to-br from-primary/5 to-secondary/5 dark:from-primary/10 dark:to-secondary/10 rounded-2xl p-6 border border-primary/20">
+            <div class="flex items-start gap-3">
+              <span class="material-symbols-outlined text-primary text-xl">info</span>
+              <div>
+                <p class="text-sm font-semibold text-primary dark:text-primary-light mb-1">Carrito activo</p>
+                <p class="text-sm text-text-muted dark:text-text-muted-dark">
+                  El carrito funciona en modo demo. Al finalizar la compra, se genera un mensaje de WhatsApp con tu pedido.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- CONTENIDO PRINCIPAL -->
+      <section class="flex-1 min-w-0">
+        <!-- Breadcrumb -->
+        <nav class="flex items-center gap-2 text-sm mb-6 animate-slide-up">
+          <a href="./index.html" class="text-text-muted dark:text-text-muted-dark hover:text-primary dark:hover:text-primary-light transition-colors">
+            Inicio
+          </a>
+          <span class="text-text-muted dark:text-text-muted-dark">›</span>
+          <a href="./shop.html" class="text-text-muted dark:text-text-muted-dark hover:text-primary dark:hover:text-primary-light transition-colors">
+            Tienda
+          </a>
+          <span id="crumb-category-wrap" class="hidden">
+            <span class="text-text-muted dark:text-text-muted-dark">›</span>
+            <span id="crumb-category" class="text-primary dark:text-primary-light font-semibold"></span>
+          </span>
+        </nav>
+
+        <!-- Encabezado -->
+        <div class="mb-8 animate-slide-up" style="animation-delay: 0.1s">
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div>
+              <h1 id="page-title" class="text-3xl md:text-4xl font-black tracking-tight mb-2">Componentes Tecnológicos</h1>
+              <p id="result-subtitle" class="text-text-muted dark:text-text-muted-dark">
+                <span class="skeleton inline-block h-4 w-48 rounded"></span>
+              </p>
+            </div>
+
+            <!-- Ordenación -->
+            <div class="flex items-center gap-4">
+              <div class="relative min-w-[200px]">
+                <select id="sort-select" class="custom-select">
+                  <option value="latest">Más recientes</option>
+                  <option value="price_asc">Precio: menor a mayor</option>
+                  <option value="price_desc">Precio: mayor a menor</option>
+                  <option value="name_asc">Nombre: A-Z</option>
+                  <option value="name_desc">Nombre: Z-A</option>
+                </select>
+                <span class="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted dark:text-text-muted-dark pointer-events-none material-symbols-outlined text-sm">
+                  expand_more
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="state-box" class="hidden"></div>
+
+        <!-- Grid productos -->
+        <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in" style="animation-delay: 0.2s">
+          <div class="product-card p-5">
+            <div class="skeleton rounded-xl h-48 mb-4"></div>
+            <div class="skeleton h-5 rounded mb-3 w-3/4"></div>
+            <div class="skeleton h-4 rounded mb-4 w-1/2"></div>
+            <div class="skeleton h-10 rounded-lg"></div>
+          </div>
+          <div class="product-card p-5">
+            <div class="skeleton rounded-xl h-48 mb-4"></div>
+            <div class="skeleton h-5 rounded mb-3 w-3/4"></div>
+            <div class="skeleton h-4 rounded mb-4 w-1/2"></div>
+            <div class="skeleton h-10 rounded-lg"></div>
+          </div>
+          <div class="product-card p-5">
+            <div class="skeleton rounded-xl h-48 mb-4"></div>
+            <div class="skeleton h-5 rounded mb-3 w-3/4"></div>
+            <div class="skeleton h-4 rounded mb-4 w-1/2"></div>
+            <div class="skeleton h-10 rounded-lg"></div>
+          </div>
+        </div>
+
+        <!-- Carga más -->
+        <div class="mt-12 pt-8 border-t border-border-light dark:border-border-dark flex flex-col items-center gap-6">
+          <p id="showing-text" class="text-sm text-text-muted dark:text-text-muted-dark font-semibold">
+            <span class="skeleton inline-block h-4 w-32 rounded"></span>
+          </p>
+          <button id="load-more" class="hidden btn-primary px-12 py-3">
+            <span>Cargar más productos</span>
+            <span class="material-symbols-outlined">expand_more</span>
+          </button>
+          <div id="loading-more" class="hidden flex items-center gap-3 text-text-muted dark:text-text-muted-dark">
+            <div class="w-5 h-5 border-2 border-primary/30 border-t-primary rounded-full animate-spin"></div>
+            <span>Cargando más productos...</span>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- FOOTER INJECT -->
+  <div id="site-footer"></div>
+
+  <!-- Botón móvil filtros -->
+  <div class="lg:hidden fixed bottom-6 right-6 z-40">
+    <button id="mobile-filter-toggle" class="btn-primary w-14 h-14 rounded-full shadow-lg">
+      <span class="material-symbols-outlined text-xl">filter_alt</span>
+    </button>
+  </div>
+
+  <!-- Modal filtros móviles -->
+  <div id="mobile-filters-modal" class="fixed inset-0 z-50 hidden">
+    <div class="absolute inset-0 bg-black/50" onclick="document.getElementById('mobile-filters-modal').classList.add('hidden')"></div>
+    <div class="absolute inset-y-0 left-0 w-4/5 max-w-sm bg-surface-light dark:bg-surface-dark overflow-y-auto p-6">
+      <div class="flex items-center justify-between mb-6">
+        <h3 class="text-xl font-bold">Filtros</h3>
+        <button onclick="document.getElementById('mobile-filters-modal').classList.add('hidden')" class="p-2 hover:bg-primary/10 rounded-lg">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+      <div id="mobile-filters-content"></div>
+    </div>
+  </div>
+
+  <!-- ✅ INYECTOR -->
+  <script type="module" src="./js/partials.js"></script>
+
+  <!-- Script principal tienda -->
+  <script type="module" src="./js/pages/shop.js"></script>
+
+  <!-- Script modal móvil -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const mobileToggle = document.getElementById('mobile-filter-toggle');
+      const modal = document.getElementById('mobile-filters-modal');
+      const mobileContent = document.getElementById('mobile-filters-content');
+      const sidebar = document.querySelector('aside');
+      
+      if (mobileToggle && sidebar) {
+        mobileToggle.addEventListener('click', function() {
+          mobileContent.innerHTML = sidebar.innerHTML;
+          modal.classList.remove('hidden');
+        });
+      }
+      
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+          modal.classList.add('hidden');
+        }
+      });
+    });
+  </script>
+
+  <!-- ✅ Quitado: script de "agregar al carrito" en las fichas -->
+</body>
+</html>

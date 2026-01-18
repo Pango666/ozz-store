@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuración - Admin OzzStore</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: { extend: { colors: { primary: "#1313ec", "primary-hover": "#0f0fc7" } } }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+    <script src="../js/env.js"></script>
+</head>
+
+<body class="bg-gray-50 min-h-screen">
+    <div class="flex">
+        <div id="admin-sidebar"></div>
+        <div class="flex-1 flex flex-col min-h-screen">
+            <div id="admin-topbar"></div>
+            <main class="flex-1 p-6">
+                <div class="max-w-3xl mx-auto">
+                    <div class="mb-6">
+                        <h1 class="text-2xl font-bold text-gray-900">Configuración</h1>
+                        <p class="text-gray-500 mt-1">Ajustes de tu tienda</p>
+                    </div>
+
+                    <form id="settings-form" class="space-y-6">
+                        <!-- Store info -->
+                        <div class="bg-white rounded-xl border border-gray-200 p-6">
+                            <h2 class="font-semibold mb-4">Información de la tienda</h2>
+                            <div class="grid gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium mb-1">Nombre de la tienda</label>
+                                    <input type="text" id="store_name" disabled
+                                        class="w-full px-4 py-2 border rounded-lg bg-gray-50 text-gray-500">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-1">Slug</label>
+                                    <input type="text" id="store_slug" disabled
+                                        class="w-full px-4 py-2 border rounded-lg bg-gray-50 text-gray-500">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-1">Moneda</label>
+                                    <input type="text" id="store_currency" disabled
+                                        class="w-full px-4 py-2 border rounded-lg bg-gray-50 text-gray-500">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Custom settings -->
+                        <div class="bg-white rounded-xl border border-gray-200 p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <h2 class="font-semibold">Configuración personalizada</h2>
+                                <button type="button" id="btn-add-setting"
+                                    class="text-sm text-primary hover:underline">+ Agregar</button>
+                            </div>
+                            <div id="settings-list" class="space-y-3">
+                                <p class="text-gray-400 text-sm">Cargando...</p>
+                            </div>
+                        </div>
+
+                        <button type="submit" id="btn-save"
+                            class="w-full bg-primary hover:bg-primary-hover text-white font-medium py-3 rounded-lg">
+                            Guardar cambios
+                        </button>
+                    </form>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script type="module" src="../js/admin/settings.js"></script>
+</body>
+
+</html>

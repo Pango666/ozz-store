@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html class="light" lang="es">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TechStore | Producto</title>
+
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&display=swap"
+    rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@200..700&display=swap"
+    rel="stylesheet" />
+
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: { primary: "#1313ec", "background-light": "#f6f6f8", "background-dark": "#101022" },
+          fontFamily: { display: ["Manrope", "sans-serif"] },
+          borderRadius: { DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px" },
+        },
+      },
+    }
+  </script>
+
+  <style>
+    body {
+      font-family: 'Manrope', sans-serif;
+    }
+
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+
+    /* Para que la landing cruda no reviente el layout */
+    .product-landing-bleed {
+      width: 100vw;
+      margin-left: calc(50% - 50vw);
+      margin-right: calc(50% - 50vw);
+    }
+
+    #product-landing img,
+    #product-landing video {
+      width: 100%;
+      display: block;
+      height: auto;
+    }
+
+    /* IF RAME NO ES IMG -> NO height:auto, NO 16:9 */
+    #product-landing iframe {
+      width: 100%;
+      display: block;
+      border: 0;
+      height: 1px;
+      /* se recalcula por JS */
+      min-height: 900px;
+      /* fallback mientras carga */
+    }
+
+    /* Mejoras visuales simples */
+    .product-image-container {
+      position: relative;
+      overflow: hidden;
+      border-radius: 1rem;
+    }
+
+    .product-image-container img {
+      transition: transform 0.3s ease;
+    }
+
+    .product-image-container:hover img {
+      transform: scale(1.02);
+    }
+
+    /* Thumbnails con efecto hover */
+    .product-thumb {
+      border: 2px solid transparent;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      width: 80px;
+      height: 80px;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .product-thumb:hover {
+      border-color: #1313ec;
+      transform: scale(1.05);
+    }
+
+    .product-thumb.active {
+      border-color: #1313ec;
+    }
+
+    .product-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* Scrollbar para thumbnails */
+    #product-thumbs::-webkit-scrollbar {
+      height: 6px;
+    }
+
+    #product-thumbs::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 3px;
+    }
+
+    .dark #product-thumbs::-webkit-scrollbar-track {
+      background: #2d2d42;
+    }
+
+    #product-thumbs::-webkit-scrollbar-thumb {
+      background: #c5c5d3;
+      border-radius: 3px;
+    }
+
+    .dark #product-thumbs::-webkit-scrollbar-thumb {
+      background: #4b5563;
+    }
+
+    /* Ficha técnica con mejor espaciado */
+    .spec-item {
+      padding: 0.75rem;
+      border-bottom: 1px solid #e5e7eb;
+      transition: background-color 0.2s;
+    }
+
+    .spec-item:hover {
+      background-color: rgba(19, 19, 236, 0.05);
+    }
+
+    .dark .spec-item {
+      border-bottom-color: #374151;
+    }
+
+    .dark .spec-item:hover {
+      background-color: rgba(19, 19, 236, 0.1);
+    }
+
+    .spec-label {
+      color: #6b7280;
+      font-size: 0.875rem;
+    }
+
+    .dark .spec-label {
+      color: #9ca3af;
+    }
+
+    .spec-value {
+      color: #111827;
+      font-weight: 500;
+      font-size: 0.875rem;
+    }
+
+    .dark .spec-value {
+      color: #f9fafb;
+    }
+
+    /* Botones mejorados */
+    .btn-primary {
+      background: #1313ec;
+      color: white;
+      font-weight: 600;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.5rem;
+      transition: all 0.2s ease;
+    }
+
+    .btn-primary:hover {
+      background: #0f0fc7;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(19, 19, 236, 0.2);
+    }
+
+    /* Grid responsive para ficha técnica */
+    @media (min-width: 640px) {
+      #product-specs {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.5rem;
+      }
+
+      #product-specs .spec-item {
+        display: flex;
+        flex-direction: column;
+        border: 1px solid #e5e7eb;
+        border-radius: 0.5rem;
+        padding: 0.75rem;
+      }
+
+      .dark #product-specs .spec-item {
+        border-color: #374151;
+      }
+
+      #product-specs .spec-label {
+        font-size: 0.8rem;
+        margin-bottom: 0.25rem;
+      }
+
+      #product-specs .spec-value {
+        font-size: 0.9rem;
+      }
+    }
+  </style>
+
+  <script src="./js/env.js"></script>
+</head>
+
+<body class="bg-background-light dark:bg-background-dark text-[#111118] dark:text-white transition-colors duration-300">
+  <div id="site-header"></div>
+
+  <main class="max-w-[1280px] mx-auto px-6 py-8">
+    <div class="text-sm text-[#616189] dark:text-gray-400 mb-6">
+      <a class="hover:text-primary" href="./index.html">Inicio</a>
+      <span class="mx-2">›</span>
+      <a class="hover:text-primary" href="./shop.html">Tienda</a>
+      <span class="mx-2">›</span>
+      <span class="text-[#111118] dark:text-white" id="breadcrumb-product">Producto</span>
+    </div>
+
+    <section class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      <!-- LEFT: Media + Descripción -->
+      <div class="lg:col-span-7">
+        <div
+          class="product-image-container rounded-2xl overflow-hidden bg-white dark:bg-white/5 border border-[#f0f0f4] dark:border-white/10">
+          <div class="aspect-square bg-[#f0f0f4] dark:bg-white/5">
+            <img id="product-main-image" class="w-full h-full object-contain p-4" alt="Producto"
+              src="https://placehold.co/1200x1200?text=Producto" />
+          </div>
+        </div>
+
+        <!-- MINIATURAS (siempre visibles) -->
+        <div id="product-thumbs" class="mt-4 flex gap-3 overflow-x-auto pb-2"></div>
+
+        <!-- DESCRIPCIÓN -->
+        <div class="mt-8 rounded-2xl bg-white dark:bg-white/5 border border-[#f0f0f4] dark:border-white/10 p-6">
+          <h3 class="text-xl font-black mb-4">Descripción</h3>
+          <div id="product-description"
+            class="text-sm text-[#616189] dark:text-gray-300 leading-relaxed whitespace-pre-line">
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Info + Ficha técnica -->
+      <div class="lg:col-span-5">
+        <div class="rounded-2xl bg-white dark:bg-white/5 border border-[#f0f0f4] dark:border-white/10 p-6">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="text-xs font-bold tracking-[0.2em] uppercase text-primary">Producto</span>
+            <span id="product-category-pill"
+              class="text-xs font-bold px-2 py-1 rounded-full bg-primary/10 text-primary hidden"></span>
+          </div>
+
+          <h1 id="product-title" class="text-4xl font-black tracking-tight mb-2">Cargando...</h1>
+          <p id="product-subtitle" class="text-[#616189] dark:text-gray-400 mb-6">—</p>
+
+          <div class="flex items-baseline gap-3 mb-6">
+            <div id="product-price" class="text-3xl font-semibold">—</div>
+            <div id="product-compare" class="text-lg text-[#616189] line-through hidden">—</div>
+          </div>
+
+          <div id="variant-selectors" class="space-y-5 mb-6"></div>
+
+          <div class="grid grid-cols-2 gap-3 mb-6">
+            <div class="rounded-xl border border-[#f0f0f4] dark:border-white/10 p-4 bg-white/60 dark:bg-white/5">
+              <div class="text-[10px] font-bold uppercase tracking-widest text-[#616189] dark:text-white/40">Categoría
+              </div>
+              <div id="product-category" class="text-sm font-bold">—</div>
+            </div>
+            <div class="rounded-xl border border-[#f0f0f4] dark:border-white/10 p-4 bg-white/60 dark:bg-white/5">
+              <div class="text-[10px] font-bold uppercase tracking-widest text-[#616189] dark:text-white/40">SKU</div>
+              <div id="product-sku" class="text-sm font-bold">—</div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 gap-3">
+            <button id="btn-add-cart" class="btn-primary w-full h-12 flex items-center justify-center gap-2">
+              <span class="material-symbols-outlined">add_shopping_cart</span>
+              Agregar al carrito
+            </button>
+
+            <a href="./cart.html"
+              class="w-full h-12 rounded-xl border-2 border-[#111118] dark:border-white text-sm font-bold transition hover:bg-[#111118] hover:text-white dark:hover:bg-white dark:hover:text-[#111118] flex items-center justify-center">
+              Ir al carrito
+            </a>
+
+            <button id="btn-whatsapp"
+              class="w-full h-12 rounded-xl bg-primary text-white font-bold hover:bg-primary/90 transition flex items-center justify-center gap-2">
+              <span class="material-symbols-outlined">chat</span>
+              <span id="btn-whatsapp-text">Pedir por WhatsApp</span>
+            </button>
+          </div>
+
+          <p id="whatsapp-hint" class="mt-3 text-center text-xs text-[#616189] dark:text-gray-400">
+            Al hacer clic se abrirá WhatsApp con el pedido listo para enviar.
+          </p>
+
+          <div id="cart-msg" class="hidden mt-3 text-sm"></div>
+
+          <a href="./shop.html"
+            class="mt-3 block w-full h-12 rounded-xl border border-[#f0f0f4] dark:border-white/10 text-sm font-bold transition hover:bg-[#f0f0f4] dark:hover:bg-white/10 flex items-center justify-center">
+            Seguir comprando
+          </a>
+        </div>
+
+        <!-- FICHA TÉCNICA -->
+        <div class="mt-8 rounded-2xl bg-white dark:bg-white/5 border border-[#f0f0f4] dark:border-white/10 p-6">
+          <h3 class="text-xl font-black mb-4">Ficha técnica</h3>
+          <div id="product-specs" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- LANDING: abajo de TODO, full width -->
+    <section class="mt-10 product-landing-bleed">
+      <div id="product-landing"
+        class="w-full rounded-2xl bg-white dark:bg-white/5 border border-[#f0f0f4] dark:border-white/10 overflow-hidden">
+      </div>
+    </section>
+  </main>
+
+  <div id="site-footer"></div>
+
+  <!-- DOMPurify antes de product.js -->
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.11/dist/purify.min.js"></script>
+
+  <script type="module" src="./js/partials.js"></script>
+  <script type="module" src="./js/pages/product.js"></script>
+
+  <!-- Script MUY SIMPLE para manejar las miniaturas -->
+  <script>
+    // Script simple y funcional para manejar miniaturas
+    document.addEventListener('DOMContentLoaded', function () {
+      console.log('Script de miniaturas cargado');
+
+      // Función para manejar clicks en miniaturas
+      function handleThumbClick(e) {
+        // Buscar si el click fue en una miniatura o en su imagen
+        const thumb = e.target.closest('[data-image]') || e.target.closest('img');
+        if (!thumb) return;
+
+        // Obtener la URL de la imagen
+        const imageUrl = thumb.dataset.image || thumb.src;
+        if (!imageUrl) return;
+
+        // Cambiar la imagen principal
+        const mainImage = document.getElementById('product-main-image');
+        if (mainImage) {
+          mainImage.src = imageUrl;
+
+          // Agregar clase para animación
+          mainImage.classList.add('image-fade');
+          setTimeout(() => mainImage.classList.remove('image-fade'), 300);
+        }
+
+        // Marcar miniatura como activa
+        document.querySelectorAll('.product-thumb').forEach(t => {
+          t.classList.remove('active');
+        });
+
+        // Marcar la miniatura clickeada como activa
+        const thumbContainer = thumb.closest('.product-thumb') || thumb;
+        thumbContainer.classList.add('active');
+
+        // Prevenir comportamiento por defecto si es un enlace
+        if (thumb.tagName === 'A') {
+          e.preventDefault();
+        }
+      }
+
+      // Observar cuando se agreguen miniaturas dinámicamente
+      const thumbContainer = document.getElementById('product-thumbs');
+      if (thumbContainer) {
+        // Escuchar clicks en el contenedor (event delegation)
+        thumbContainer.addEventListener('click', handleThumbClick);
+
+        // También escuchar cuando se agreguen miniaturas dinámicamente
+        const observer = new MutationObserver(function (mutations) {
+          mutations.forEach(function (mutation) {
+            if (mutation.addedNodes.length) {
+              // Agregar clase product-thumb a nuevos elementos
+              mutation.addedNodes.forEach(function (node) {
+                if (node.nodeType === 1) { // Element node
+                  if (node.tagName === 'IMG' || node.hasAttribute('data-image')) {
+                    const thumbDiv = document.createElement('div');
+                    thumbDiv.className = 'product-thumb';
+                    thumbDiv.appendChild(node.cloneNode(true));
+                    node.parentNode.replaceChild(thumbDiv, node);
+                  }
+                }
+              });
+            }
+          });
+        });
+
+        observer.observe(thumbContainer, { childList: true, subtree: true });
+
+        // Procesar miniaturas existentes
+        setTimeout(function () {
+          const existingThumbs = thumbContainer.querySelectorAll('img, [data-image]');
+          existingThumbs.forEach(function (thumb) {
+            if (!thumb.closest('.product-thumb')) {
+              const thumbDiv = document.createElement('div');
+              thumbDiv.className = 'product-thumb';
+              thumbDiv.appendChild(thumb.cloneNode(true));
+              thumb.parentNode.replaceChild(thumbDiv, thumb);
+            }
+          });
+
+          // Marcar primera miniatura como activa
+          const firstThumb = thumbContainer.querySelector('.product-thumb');
+          if (firstThumb) {
+            firstThumb.classList.add('active');
+          }
+        }, 500);
+      }
+    });
+  </script>
+
+  <!-- Script para ajustar iframes de landing -->
+  <script>
+    (function () {
+      const seen = new WeakSet();
+
+      function getDocHeight(doc) {
+        const b = doc.body, e = doc.documentElement;
+        return Math.max(
+          b?.scrollHeight || 0, e?.scrollHeight || 0,
+          b?.offsetHeight || 0, e?.offsetHeight || 0
+        );
+      }
+
+      function resize(iframe) {
+        try {
+          const doc = iframe.contentDocument || iframe.contentWindow?.document;
+          if (!doc) return;
+          const h = getDocHeight(doc);
+          if (h > 0) iframe.style.height = h + "px";
+        } catch (_) { }
+      }
+
+      function hook(iframe) {
+        if (!iframe || seen.has(iframe)) return;
+        seen.add(iframe);
+
+        iframe.setAttribute("scrolling", "no");
+        iframe.style.overflow = "hidden";
+
+        const tick = () => resize(iframe);
+
+        iframe.addEventListener("load", () => {
+          tick();
+          setTimeout(tick, 150);
+          setTimeout(tick, 600);
+          setTimeout(tick, 1200);
+          setTimeout(tick, 2500);
+        });
+
+        window.addEventListener("resize", tick);
+        tick();
+
+        try {
+          const doc = iframe.contentDocument;
+          if (doc && window.ResizeObserver) {
+            const ro = new ResizeObserver(tick);
+            doc.documentElement && ro.observe(doc.documentElement);
+            doc.body && ro.observe(doc.body);
+          }
+        } catch (_) { }
+      }
+
+      function scan() {
+        document.querySelectorAll("#product-landing iframe").forEach(hook);
+      }
+
+      window.addEventListener("load", () => {
+        const host = document.querySelector("#product-landing");
+        if (!host) return;
+
+        scan();
+
+        const mo = new MutationObserver(() => scan());
+        mo.observe(host, { childList: true, subtree: true });
+      });
+    })();
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contacto - Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>tailwind.config = { theme: { extend: { colors: { primary: "#2563eb" } } } }</script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+    <script src="../js/env.js"></script>
+</head>
+
+<body class="bg-slate-100 min-h-screen">
+    <div class="flex">
+        <div id="admin-sidebar"></div>
+        <div class="flex-1 flex flex-col min-h-screen">
+            <div id="admin-topbar"></div>
+
+            <main class="flex-1 p-6 lg:p-8">
+                <div class="max-w-4xl mx-auto">
+                    <!-- Header -->
+                    <div class="mb-8">
+                        <h1 class="text-2xl font-bold text-slate-900">Información de Contacto</h1>
+                        <p class="text-slate-500 mt-1">Configura los datos de contacto que aparecen en el footer y otras
+                            partes de la tienda</p>
+                    </div>
+
+                    <!-- Form -->
+                    <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
+                        <form id="contact-form" class="space-y-6">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 mb-2">Teléfono</label>
+                                    <input type="text" id="contact-phone"
+                                        class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
+                                        placeholder="+591 123 4567" />
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 mb-2">WhatsApp</label>
+                                    <input type="text" id="contact-whatsapp"
+                                        class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
+                                        placeholder="+59172078692" />
+                                    <p class="text-xs text-slate-500 mt-1">Número con código de país</p>
+                                </div>
+
+                                <div class="md:col-span-2">
+                                    <label class="block text-sm font-medium text-slate-700 mb-2">Email</label>
+                                    <input type="email" id="contact-email"
+                                        class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
+                                        placeholder="contacto@tutienda.com" />
+                                </div>
+
+                                <div class="md:col-span-2">
+                                    <label class="block text-sm font-medium text-slate-700 mb-2">Dirección</label>
+                                    <textarea id="contact-address" rows="2"
+                                        class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none resize-none"
+                                        placeholder="Av. Principal #123, Ciudad"></textarea>
+                                </div>
+                            </div>
+
+                            <hr class="my-6">
+
+                            <h3 class="text-lg font-semibold text-slate-900 mb-4">Redes Sociales</h3>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 mb-2">Facebook (URL)</label>
+                                    <input type="url" id="social-facebook"
+                                        class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
+                                        placeholder="https://facebook.com/tutienda" />
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 mb-2">Instagram (URL)</label>
+                                    <input type="url" id="social-instagram"
+                                        class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
+                                        placeholder="https://instagram.com/tutienda" />
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 mb-2">TikTok (URL)</label>
+                                    <input type="url" id="social-tiktok"
+                                        class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
+                                        placeholder="https://tiktok.com/@tutienda" />
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 mb-2">YouTube (URL)</label>
+                                    <input type="url" id="social-youtube"
+                                        class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
+                                        placeholder="https://youtube.com/c/tutienda" />
+                                </div>
+                            </div>
+
+                            <div class="flex justify-end pt-6 border-t border-slate-200">
+                                <button type="submit" id="btn-save"
+                                    class="px-6 py-2.5 bg-primary text-white font-medium rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M5 13l4 4L19 7" />
+                                    </svg>
+                                    Guardar cambios
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script type="module">
+        import { requireAdmin } from '../js/admin/auth.js';
+        import { initAdminLayout, showToast, setBreadcrumb } from '../js/admin/layout.js';
+        import { supabase } from '../js/supabaseClient.js';
+
+        let storeId = null;
+        const keys = [
+            'contact_phone', 'contact_email', 'contact_address', 'whatsapp',
+            'social_facebook', 'social_instagram', 'social_tiktok', 'social_youtube'
+        ];
+
+        async function init() {
+            const access = await requireAdmin();
+            if (!access) return;
+
+            storeId = access.store.id;
+            await initAdminLayout(access);
+            setBreadcrumb('Contacto');
+
+            document.querySelector('[data-page="contact"]')?.classList.add('active');
+
+            await loadSettings();
+        }
+
+        async function loadSettings() {
+            const { data } = await supabase
+                .from('settings')
+                .select('key, value')
+                .eq('store_id', storeId)
+                .in('key', keys);
+
+            const config = {};
+            data?.forEach(s => { config[s.key] = s.value; });
+
+            document.getElementById('contact-phone').value = config.contact_phone || '';
+            document.getElementById('contact-email').value = config.contact_email || '';
+            document.getElementById('contact-address').value = config.contact_address || '';
+            document.getElementById('contact-whatsapp').value = config.whatsapp || '';
+            document.getElementById('social-facebook').value = config.social_facebook || '';
+            document.getElementById('social-instagram').value = config.social_instagram || '';
+            document.getElementById('social-tiktok').value = config.social_tiktok || '';
+            document.getElementById('social-youtube').value = config.social_youtube || '';
+        }
+
+        async function saveSetting(key, value) {
+            const { data: existing } = await supabase
+                .from('settings')
+                .select('id')
+                .eq('store_id', storeId)
+                .eq('key', key)
+                .maybeSingle();
+
+            if (existing) {
+                await supabase.from('settings').update({ value }).eq('id', existing.id);
+            } else if (value) {
+                await supabase.from('settings').insert({ store_id: storeId, key, value });
+            }
+        }
+
+        document.getElementById('contact-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btn-save');
+            btn.disabled = true;
+            btn.textContent = 'Guardando...';
+
+            try {
+                await saveSetting('contact_phone', document.getElementById('contact-phone').value);
+                await saveSetting('contact_email', document.getElementById('contact-email').value);
+                await saveSetting('contact_address', document.getElementById('contact-address').value);
+                await saveSetting('whatsapp', document.getElementById('contact-whatsapp').value);
+                await saveSetting('social_facebook', document.getElementById('social-facebook').value);
+                await saveSetting('social_instagram', document.getElementById('social-instagram').value);
+                await saveSetting('social_tiktok', document.getElementById('social-tiktok').value);
+                await saveSetting('social_youtube', document.getElementById('social-youtube').value);
+
+                showToast('Cambios guardados correctamente', 'success');
+            } catch (err) {
+                console.error(err);
+                showToast('Error al guardar', 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg> Guardar cambios`;
+            }
+        });
+
+        init();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="es" class="light">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mi Perfil - TechStore</title>
+
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" crossorigin href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@200..700&display=swap" rel="stylesheet"/>
+
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: { 
+            primary:"#1313ec",
+            "primary-light": "#eef0ff",
+            "background-light":"#f6f6f8",
+            "background-dark":"#101022",
+            "surface-light": "#ffffff",
+            "surface-dark": "#1a1a2e",
+          },
+          fontFamily: { display: ["Manrope","system-ui","sans-serif"] },
+          borderRadius: { 
+            xl: "0.75rem",
+            "2xl": "1rem",
+            "3xl": "1.5rem"
+          },
+          boxShadow: {
+            'soft': '0 4px 20px rgba(0, 0, 0, 0.05)',
+            'soft-dark': '0 4px 20px rgba(0, 0, 0, 0.2)',
+          }
+        },
+      },
+    };
+  </script>
+  
+  <style>
+    body { 
+      font-family: Manrope, system-ui, sans-serif;
+      background: linear-gradient(135deg, #f6f6f8 0%, #eef0ff 100%);
+    }
+    .dark body {
+      background: linear-gradient(135deg, #101022 0%, #0d0d1a 100%);
+    }
+    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    
+    * {
+      transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.2s ease;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .fade-in {
+      animation: fadeIn 0.5s ease-out;
+    }
+    
+    /* Avatar styling */
+    .avatar-initials {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+  </style>
+
+  <!-- ENV (ruta correcta desde /auth/) -->
+  <script src="../js/env.js"></script>
+</head>
+
+<body class="text-[#111118] dark:text-white min-h-screen">
+  <!-- HEADER -->
+  <div id="site-header"></div>
+
+  <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
+      <!-- Sidebar de navegación -->
+      <div class="lg:col-span-1">
+        <div class="bg-white dark:bg-surface-dark border border-white/10 rounded-2xl p-6 shadow-soft dark:shadow-soft-dark sticky top-24">
+          <!-- Perfil info -->
+          <div class="text-center mb-8">
+            <div class="relative inline-block">
+              <div id="pf-avatar" class="avatar-initials w-24 h-24 rounded-full flex items-center justify-center text-3xl font-bold text-white mx-auto mb-4 shadow-lg">
+                <span id="avatar-initials">U</span>
+              </div>
+              <div class="absolute bottom-4 right-6 w-6 h-6 bg-green-500 rounded-full border-4 border-white dark:border-surface-dark"></div>
+            </div>
+            <h1 class="text-xl font-bold">Mi Perfil</h1>
+            <p class="text-sm text-[#616189] dark:text-gray-400 mt-1">Sesión activa</p>
+          </div>
+
+          <!-- Menú de navegación -->
+          <nav class="space-y-2 mb-8">
+            <a href="#" class="flex items-center gap-3 px-4 py-3 bg-primary/10 text-primary rounded-xl font-medium transition-all duration-200 group">
+              <span class="material-symbols-outlined group-hover:scale-110">person</span>
+              <span>Información Personal</span>
+            </a>
+            <a href="/orders.html" class="flex items-center gap-3 px-4 py-3 text-[#616189] dark:text-gray-400 hover:text-primary hover:bg-primary/5 rounded-xl font-medium transition-all duration-200 group">
+              <span class="material-symbols-outlined group-hover:scale-110">shopping_bag</span>
+              <span>Mis Pedidos</span>
+            </a>
+            <a href="/cart.html" class="flex items-center gap-3 px-4 py-3 text-[#616189] dark:text-gray-400 hover:text-primary hover:bg-primary/5 rounded-xl font-medium transition-all duration-200 group">
+              <span class="material-symbols-outlined group-hover:scale-110">shopping_cart</span>
+              <span>Carrito de Compras</span>
+              <span id="cart-count-sidebar" class="ml-auto bg-primary text-white text-xs px-2 py-1 rounded-full hidden">0</span>
+            </a>
+            <a href="/wishlist.html" class="flex items-center gap-3 px-4 py-3 text-[#616189] dark:text-gray-400 hover:text-primary hover:bg-primary/5 rounded-xl font-medium transition-all duration-200 group">
+              <span class="material-symbols-outlined group-hover:scale-110">favorite</span>
+              <span>Lista de Deseos</span>
+            </a>
+            <a href="/settings.html" class="flex items-center gap-3 px-4 py-3 text-[#616189] dark:text-gray-400 hover:text-primary hover:bg-primary/5 rounded-xl font-medium transition-all duration-200 group">
+              <span class="material-symbols-outlined group-hover:scale-110">settings</span>
+              <span>Configuración</span>
+            </a>
+          </nav>
+
+          <!-- Sesión info -->
+          <div class="border-t border-[#e5e7eb] dark:border-white/10 pt-6">
+            <p class="text-xs font-semibold uppercase tracking-wider text-[#616189] dark:text-gray-400 mb-2">Información de Sesión</p>
+            <div class="flex items-center justify-between text-sm">
+              <span class="text-[#616189] dark:text-gray-400">Estado</span>
+              <span class="flex items-center gap-1.5 text-green-600 dark:text-green-400">
+                <span class="w-2 h-2 bg-green-500 rounded-full"></span>
+                Activa
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contenido principal -->
+      <div class="lg:col-span-2 space-y-6 md:space-y-8">
+        <!-- Tarjeta de bienvenida -->
+        <div class="bg-gradient-to-r from-primary to-blue-600 rounded-2xl p-6 text-white shadow-lg">
+          <div class="flex items-start justify-between">
+            <div>
+              <h2 class="text-2xl font-bold">¡Hola de nuevo!</h2>
+              <p class="text-primary-light/80 mt-1">Bienvenido a tu panel de control</p>
+            </div>
+            <span class="material-symbols-outlined text-3xl opacity-80">waving_hand</span>
+          </div>
+          <div class="mt-4 text-sm opacity-90">
+            <p>Tu sesión está activa y segura con Supabase Auth.</p>
+          </div>
+        </div>
+
+        <!-- Información del usuario -->
+        <div class="bg-white dark:bg-surface-dark border border-white/10 rounded-2xl p-6 shadow-soft dark:shadow-soft-dark fade-in">
+          <div class="flex items-center gap-3 mb-6">
+            <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
+              <span class="material-symbols-outlined text-primary">badge</span>
+            </div>
+            <div>
+              <h2 class="text-xl font-bold">Información de Cuenta</h2>
+              <p class="text-sm text-[#616189] dark:text-gray-400">Datos de tu cuenta de TechStore</p>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Email -->
+            <div class="space-y-3">
+              <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-[#616189] dark:text-gray-400">mail</span>
+                <label class="text-sm font-semibold text-[#374151] dark:text-gray-300">Correo Electrónico</label>
+              </div>
+              <div class="rounded-xl border border-[#e5e7eb] dark:border-white/10 bg-[#f9fafb] dark:bg-white/5 p-4">
+                <div id="pf-email" class="font-medium text-lg truncate flex items-center gap-2">
+                  <span>—</span>
+                </div>
+                <p class="text-xs text-[#616189] dark:text-gray-400 mt-1">Email verificado y seguro</p>
+              </div>
+            </div>
+
+            <!-- User ID -->
+            <div class="space-y-3">
+              <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-[#616189] dark:text-gray-400">fingerprint</span>
+                <label class="text-sm font-semibold text-[#374151] dark:text-gray-300">ID de Usuario</label>
+              </div>
+              <div class="rounded-xl border border-[#e5e7eb] dark:border-white/10 bg-[#f9fafb] dark:bg-white/5 p-4">
+                <div id="pf-user-id" class="font-mono text-sm break-all opacity-90">—</div>
+                <p class="text-xs text-[#616189] dark:text-gray-400 mt-1">Identificador único de tu cuenta</p>
+              </div>
+            </div>
+
+            <!-- Fecha de registro -->
+            <div class="space-y-3">
+              <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-[#616189] dark:text-gray-400">calendar_month</span>
+                <label class="text-sm font-semibold text-[#374151] dark:text-gray-300">Fecha de Registro</label>
+              </div>
+              <div class="rounded-xl border border-[#e5e7eb] dark:border-white/10 bg-[#f9fafb] dark:bg-white/5 p-4">
+                <div id="pf-created-at" class="font-medium">—</div>
+                <p class="text-xs text-[#616189] dark:text-gray-400 mt-1">Cuándo te uniste a TechStore</p>
+              </div>
+            </div>
+
+            <!-- Última sesión -->
+            <div class="space-y-3">
+              <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-[#616189] dark:text-gray-400">update</span>
+                <label class="text-sm font-semibold text-[#374151] dark:text-gray-300">Último Acceso</label>
+              </div>
+              <div class="rounded-xl border border-[#e5e7eb] dark:border-white/10 bg-[#f9fafb] dark:bg-white/5 p-4">
+                <div id="pf-last-signin" class="font-medium">Hace unos momentos</div>
+                <p class="text-xs text-[#616189] dark:text-gray-400 mt-1">Sesión actual activa</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Acciones rápidas -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Acceso rápido al carrito -->
+          <div class="bg-white dark:bg-surface-dark border border-white/10 rounded-2xl p-6 shadow-soft dark:shadow-soft-dark">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="w-10 h-10 rounded-lg bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
+                <span class="material-symbols-outlined text-green-600 dark:text-green-400">shopping_cart</span>
+              </div>
+              <h3 class="font-semibold">Carrito de Compras</h3>
+            </div>
+            <p class="text-sm text-[#616189] dark:text-gray-400 mb-4">Continúa con tu compra o revisa tus productos</p>
+            <a href="/cart.html" 
+               class="inline-flex items-center gap-2 px-4 py-3 bg-primary hover:bg-primary/90 text-white font-semibold rounded-lg transition-all duration-200 w-full justify-center group">
+              <span class="material-symbols-outlined group-hover:scale-110">arrow_forward</span>
+              Ir al Carrito
+            </a>
+          </div>
+
+          <!-- Cerrar sesión -->
+          <div class="bg-white dark:bg-surface-dark border border-white/10 rounded-2xl p-6 shadow-soft dark:shadow-soft-dark">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="w-10 h-10 rounded-lg bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
+                <span class="material-symbols-outlined text-red-600 dark:text-red-400">logout</span>
+              </div>
+              <h3 class="font-semibold">Cerrar Sesión</h3>
+            </div>
+            <p class="text-sm text-[#616189] dark:text-gray-400 mb-4">Sal de tu cuenta de forma segura desde este dispositivo</p>
+            <button id="btn-logout"
+                    class="inline-flex items-center gap-2 px-4 py-3 border-2 border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 font-semibold rounded-lg transition-all duration-200 w-full justify-center group"
+                    type="button">
+              <span class="material-symbols-outlined group-hover:scale-110">logout</span>
+              Cerrar Sesión
+            </button>
+          </div>
+        </div>
+
+        <!-- Información de seguridad -->
+        <div class="bg-white dark:bg-surface-dark border border-white/10 rounded-2xl p-6 shadow-soft dark:shadow-soft-dark">
+          <div class="flex items-center gap-3 mb-6">
+            <div class="w-12 h-12 rounded-xl bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
+              <span class="material-symbols-outlined text-blue-600 dark:text-blue-400">shield</span>
+            </div>
+            <div>
+              <h2 class="text-xl font-bold">Seguridad</h2>
+              <p class="text-sm text-[#616189] dark:text-gray-400">Tu cuenta está protegida con Supabase Auth</p>
+            </div>
+          </div>
+
+          <div class="space-y-4">
+            <div class="flex items-center justify-between p-4 rounded-xl border border-[#e5e7eb] dark:border-white/10 bg-[#f9fafb] dark:bg-white/5">
+              <div class="flex items-center gap-3">
+                <span class="material-symbols-outlined text-green-600 dark:text-green-400">check_circle</span>
+                <div>
+                  <p class="font-medium">Autenticación segura</p>
+                  <p class="text-xs text-[#616189] dark:text-gray-400">Sesión cifrada y protegida</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between p-4 rounded-xl border border-[#e5e7eb] dark:border-white/10 bg-[#f9fafb] dark:bg-white/5">
+              <div class="flex items-center gap-3">
+                <span class="material-symbols-outlined text-blue-600 dark:text-blue-400">encrypted</span>
+                <div>
+                  <p class="font-medium">Datos encriptados</p>
+                  <p class="text-xs text-[#616189] dark:text-gray-400">Tu información personal está segura</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between p-4 rounded-xl border border-[#e5e7eb] dark:border-white/10 bg-[#f9fafb] dark:bg-white/5">
+              <div class="flex items-center gap-3">
+                <span class="material-symbols-outlined text-purple-600 dark:text-purple-400">privacy_tip</span>
+                <div>
+                  <p class="font-medium">Privacidad garantizada</p>
+                  <p class="text-xs text-[#616189] dark:text-gray-400">No compartimos tus datos con terceros</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <div id="site-footer"></div>
+
+  <!-- ✅ Layout común: inyecta /partials/header.html y /partials/footer.html -->
+  <script type="module" src="../js/components/layout.js"></script>
+
+  <!-- lógica profile -->
+  <script type="module" src="../js/pages/profile.js"></script>
+
+  <!-- Script adicional para funcionalidades visuales -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Función para generar avatar con iniciales
+      function generateAvatar(email) {
+        const avatarElement = document.getElementById('avatar-initials');
+        if (!avatarElement || !email || email === '—') return;
+        
+        // Obtener iniciales del email
+        const initials = email.charAt(0).toUpperCase();
+        avatarElement.textContent = initials;
+        
+        // Cambiar color del avatar basado en la inicial
+        const colors = [
+          'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+          'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+          'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
+          'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
+          'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)',
+        ];
+        
+        const index = initials.charCodeAt(0) % colors.length;
+        document.getElementById('pf-avatar').style.background = colors[index];
+      }
+      
+      // Actualizar avatar cuando se cargue el email
+      const emailElement = document.getElementById('pf-email');
+      if (emailElement) {
+        // Observar cambios en el email
+        const observer = new MutationObserver(function(mutations) {
+          mutations.forEach(function(mutation) {
+            if (mutation.type === 'characterData' || mutation.type === 'childList') {
+              generateAvatar(emailElement.textContent);
+            }
+          });
+        });
+        
+        observer.observe(emailElement, {
+          characterData: true,
+          childList: true,
+          subtree: true
+        });
+        
+        // Generar avatar inicial
+        setTimeout(() => generateAvatar(emailElement.textContent), 100);
+      }
+      
+      // Actualizar contador del carrito en sidebar
+      function updateCartCount() {
+        const cartCountElement = document.getElementById('cart-count-sidebar');
+        if (!cartCountElement) return;
+        
+        // Obtener carrito del localStorage
+        const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
+        if (cartItems.length > 0) {
+          cartCountElement.textContent = cartItems.length;
+          cartCountElement.classList.remove('hidden');
+        } else {
+          cartCountElement.classList.add('hidden');
+        }
+      }
+      
+      // Actualizar cada 2 segundos
+      setInterval(updateCartCount, 2000);
+      updateCartCount();
+      
+      // Efectos de hover en botones
+      const logoutBtn = document.getElementById('btn-logout');
+      if (logoutBtn) {
+        logoutBtn.addEventListener('mouseenter', function() {
+          this.classList.add('scale-[0.98]');
+        });
+        
+        logoutBtn.addEventListener('mouseleave', function() {
+          this.classList.remove('scale-[0.98]');
+        });
+      }
+      
+      // Actualizar fecha de registro (simulada)
+      const createdAtElement = document.getElementById('pf-created-at');
+      if (createdAtElement) {
+        const now = new Date();
+        const pastDate = new Date(now.setMonth(now.getMonth() - 1));
+        createdAtElement.textContent = pastDate.toLocaleDateString('es-ES', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        });
+      }
+      
+      // Actualizar última sesión
+      const lastSigninElement = document.getElementById('pf-last-signin');
+      if (lastSigninElement) {
+        const now = new Date();
+        lastSigninElement.textContent = now.toLocaleTimeString('es-ES', {
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+      }
+    });
+  </script>
+</body>
+</html>

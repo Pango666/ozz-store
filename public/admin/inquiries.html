@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consultas - Admin OzzStore</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: { extend: { colors: { primary: "#1313ec", "primary-hover": "#0f0fc7" } } }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+    <script src="../js/env.js"></script>
+</head>
+
+<body class="bg-gray-50 min-h-screen">
+    <div class="flex">
+        <div id="admin-sidebar"></div>
+        <div class="flex-1 flex flex-col min-h-screen">
+            <div id="admin-topbar"></div>
+            <main class="flex-1 p-6">
+                <div class="max-w-5xl mx-auto">
+                    <div class="flex items-center justify-between mb-6">
+                        <div>
+                            <h1 class="text-2xl font-bold text-gray-900">Consultas</h1>
+                            <p class="text-gray-500 mt-1">Pedidos recibidos por WhatsApp</p>
+                        </div>
+                        <select id="filter-status" class="px-4 py-2 border border-gray-200 rounded-lg">
+                            <option value="">Todos los estados</option>
+                            <option value="pending">Pendientes</option>
+                            <option value="confirmed">Confirmados</option>
+                            <option value="completed">Completados</option>
+                            <option value="cancelled">Cancelados</option>
+                        </select>
+                    </div>
+
+                    <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
+                        <table class="w-full">
+                            <thead class="bg-gray-50 border-b">
+                                <tr>
+                                    <th class="text-left px-4 py-3 text-sm font-medium text-gray-600">Código</th>
+                                    <th class="text-left px-4 py-3 text-sm font-medium text-gray-600">Cliente</th>
+                                    <th class="text-left px-4 py-3 text-sm font-medium text-gray-600">Teléfono</th>
+                                    <th class="text-left px-4 py-3 text-sm font-medium text-gray-600">Total</th>
+                                    <th class="text-left px-4 py-3 text-sm font-medium text-gray-600">Estado</th>
+                                    <th class="text-left px-4 py-3 text-sm font-medium text-gray-600">Fecha</th>
+                                    <th class="text-right px-4 py-3 text-sm font-medium text-gray-600">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="inquiries-table" class="divide-y divide-gray-100">
+                                <tr>
+                                    <td colspan="7" class="px-4 py-8 text-center text-gray-400">Cargando...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script type="module" src="../js/admin/inquiries.js"></script>
+</body>
+
+</html>

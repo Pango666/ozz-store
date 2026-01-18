@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nosotros - OzzStore</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@400&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { primary: "#2563eb" },
+                    fontFamily: { display: ["Manrope", "sans-serif"] }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Manrope', sans-serif;
+        }
+    </style>
+    <script src="./js/env.js"></script>
+</head>
+
+<body class="bg-slate-50 text-slate-900 min-h-screen">
+    <!-- Header -->
+    <div id="site-header"></div>
+
+    <main class="max-w-5xl mx-auto px-4 py-16 md:py-24">
+        <!-- Loading -->
+        <div id="about-loading" class="text-center py-20">
+            <div class="inline-flex items-center gap-2 text-slate-500">
+                <svg class="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                    </path>
+                </svg>
+                <span>Cargando...</span>
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div id="about-content" class="hidden">
+            <!-- Hero -->
+            <div class="text-center mb-16">
+                <h1 id="about-title" class="text-4xl md:text-5xl font-extrabold mb-6">Sobre Nosotros</h1>
+                <div class="w-24 h-1 bg-primary mx-auto rounded-full"></div>
+            </div>
+
+            <!-- Image -->
+            <div id="about-image-container" class="hidden mb-12">
+                <img id="about-image" src="" alt="Nosotros"
+                    class="w-full max-h-96 object-cover rounded-2xl shadow-lg" />
+            </div>
+
+            <!-- Body -->
+            <div id="about-body" class="prose prose-lg prose-slate max-w-none">
+                <!-- Content loaded dynamically -->
+            </div>
+        </div>
+
+        <!-- Empty state -->
+        <div id="about-empty" class="hidden text-center py-20">
+            <span class="material-symbols-outlined text-6xl text-slate-300 mb-4">info</span>
+            <h2 class="text-xl font-bold text-slate-900 mb-2">Contenido no disponible</h2>
+            <p class="text-slate-500">La página de Nosotros aún no tiene contenido.</p>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <div id="site-footer"></div>
+
+    <script type="module" src="./js/partials.js"></script>
+    <script type="module">
+        import { supabase } from './js/supabaseClient.js';
+
+        async function loadAbout() {
+            const loading = document.getElementById('about-loading');
+            const content = document.getElementById('about-content');
+            const empty = document.getElementById('about-empty');
+
+            try {
+                const storeSlug = window.__ENV?.STORE_SLUG || 'tech-boutique';
+
+                // Get store
+                const { data: store } = await supabase
+                    .from('stores')
+                    .select('id')
+                    .eq('slug', storeSlug)
+                    .single();
+
+                if (!store) throw new Error('Store not found');
+
+                // Get settings
+                const { data: settings } = await supabase
+                    .from('settings')
+                    .select('key, value')
+                    .eq('store_id', store.id)
+                    .in('key', ['about_title', 'about_body', 'about_image']);
+
+                const config = {};
+                settings?.forEach(s => { config[s.key] = s.value; });
+
+                loading.classList.add('hidden');
+
+                if (!config.about_title && !config.about_body) {
+                    empty.classList.remove('hidden');
+                    return;
+                }
+
+                // Populate content
+                if (config.about_title) {
+                    document.getElementById('about-title').textContent = config.about_title;
+                    document.title = `${config.about_title} - OzzStore`;
+                }
+
+                if (config.about_body) {
+                    // Basic sanitization - convert newlines to paragraphs
+                    const paragraphs = config.about_body.split('\n').filter(p => p.trim());
+                    document.getElementById('about-body').innerHTML = paragraphs.map(p =>
+                        `<p>${p.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</p>`
+                    ).join('');
+                }
+
+                if (config.about_image) {
+                    document.getElementById('about-image').src = config.about_image;
+                    document.getElementById('about-image-container').classList.remove('hidden');
+                }
+
+                content.classList.remove('hidden');
+
+            } catch (err) {
+                console.error('Error loading about:', err);
+                loading.classList.add('hidden');
+                empty.classList.remove('hidden');
+            }
+        }
+
+        loadAbout();
+    </script>
+</body>
+
+</html>
