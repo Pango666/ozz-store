@@ -176,11 +176,28 @@ function renderCategories(categories) {
 
   const defaultIcons = {
     'laptops': 'laptop', 'componentes': 'memory', 'perifericos': 'keyboard',
-    'audio': 'headphones', 'monitores': 'desktop_windows', 'gaming': 'sports_esports'
+    'audio': 'headphones', 'monitores': 'desktop_windows', 'gaming': 'sports_esports',
+    'placas': 'developer_board', 'motherboard': 'developer_board', 'base': 'developer_board',
+    'procesadores': 'memory', 'cpu': 'memory', 'ram': 'memory',
+    'almacenamiento': 'storage', 'storage': 'storage', 'ssd': 'storage',
+    'fuentes': 'bolt', 'power': 'bolt', 'psu': 'bolt',
+    'tarjetas': 'videocam', 'gpu': 'videocam', 'graficas': 'videocam'
   };
 
+  // Check if icon is a valid Material Symbols name (lowercase, underscores, no URLs)
+  function isValidMaterialIcon(icon) {
+    if (!icon || typeof icon !== 'string') return false;
+    // Reject URLs, HTML tags, or very short/weird strings
+    if (icon.includes('://') || icon.includes('<') || icon.includes('>') || icon.length < 2) return false;
+    // Reject if it contains spaces (Material Symbols use underscores, not spaces)
+    if (icon.includes(' ')) return false;
+    // Reject if it's all uppercase (likely "ALT" or placeholder text)
+    if (icon === icon.toUpperCase() && icon.length <= 5) return false;
+    return true;
+  }
+
   function getIcon(cat) {
-    if (cat.icon) return cat.icon;
+    if (cat.icon && isValidMaterialIcon(cat.icon)) return cat.icon;
     const slug = cat.slug?.toLowerCase() || '';
     for (const [key, icon] of Object.entries(defaultIcons)) {
       if (slug.includes(key)) return icon;

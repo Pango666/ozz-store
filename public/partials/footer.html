@@ -115,6 +115,22 @@
   </div>
 </footer>
 
+<!-- Floating Cart Button (Global) -->
+<div id="global-floating-cart" class="fixed bottom-6 right-6 z-50">
+  <a href="/cart.html"
+    class="group w-14 h-14 bg-gradient-to-br from-slate-800 to-slate-900 dark:from-slate-700 dark:to-slate-800 rounded-full flex items-center justify-center shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-110 border border-slate-700/50 dark:border-slate-600/50 relative">
+    <svg class="w-6 h-6 text-white group-hover:scale-110 transition-transform" fill="none" stroke="currentColor"
+      viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+        d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+    </svg>
+    <span id="global-cart-badge"
+      class="hidden absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center text-xs text-white font-bold ring-2 ring-white dark:ring-slate-800">
+      0
+    </span>
+  </a>
+</div>
+
 <script type="module">
   // Cargar datos de contacto desde settings
   import { supabase } from '/js/supabaseClient.js';
@@ -162,4 +178,29 @@
 
   loadFooterData();
   document.getElementById('footer-year').textContent = new Date().getFullYear();
+
+  // Global cart badge update
+  function updateGlobalCartBadge() {
+    try {
+      const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+      const count = Array.isArray(cart) ? cart.reduce((sum, item) => sum + (item.qty || 1), 0) : 0;
+      const badge = document.getElementById('global-cart-badge');
+      if (badge) {
+        if (count > 0) {
+          badge.textContent = count > 99 ? '99+' : count;
+          badge.classList.remove('hidden');
+          badge.classList.add('flex');
+        } else {
+          badge.classList.add('hidden');
+          badge.classList.remove('flex');
+        }
+      }
+    } catch (e) { }
+  }
+
+  updateGlobalCartBadge();
+  window.addEventListener('storage', updateGlobalCartBadge);
+
+  // Custom event for same-tab updates
+  window.addEventListener('cartUpdated', updateGlobalCartBadge);
 </script>
