@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="es" class="light">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tienda - TechStore</title>
+  <title>Tienda - Web Ozz Store</title>
 
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
   <script>
@@ -27,11 +28,11 @@
             "text-muted-dark": "#9ca3af"
           },
           fontFamily: { display: ["Manrope", "system-ui", "sans-serif"] },
-          borderRadius: { 
+          borderRadius: {
             "DEFAULT": "0.75rem",
             "lg": "1rem",
             "xl": "1.25rem",
-            "2xl": "1.5rem" 
+            "2xl": "1.5rem"
           },
           animation: {
             'fade-in': 'fadeIn 0.5s ease-out',
@@ -68,77 +69,107 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" crossorigin href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@200..700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@200..700&display=swap"
+    rel="stylesheet" />
 
   <style>
-    body { 
+    body {
       font-family: Manrope, system-ui, sans-serif;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
       scroll-behavior: smooth;
     }
-    
-    ::-webkit-scrollbar { width: 10px; }
-    ::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 5px; }
-    .dark ::-webkit-scrollbar-track { background: #1a1a2e; }
+
+    ::-webkit-scrollbar {
+      width: 10px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 5px;
+    }
+
+    .dark ::-webkit-scrollbar-track {
+      background: #1a1a2e;
+    }
+
     ::-webkit-scrollbar-thumb {
       background: linear-gradient(135deg, #1313ec 0%, #8b5cf6 100%);
       border-radius: 5px;
       border: 2px solid #f1f1f1;
     }
-    .dark ::-webkit-scrollbar-thumb { border: 2px solid #1a1a2e; }
 
-    .no-scrollbar::-webkit-scrollbar { display: none; }
-    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-    
+    .dark ::-webkit-scrollbar-thumb {
+      border: 2px solid #1a1a2e;
+    }
+
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
     .product-card {
-      @apply bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark 
-             rounded-xl overflow-hidden transition-all duration-300 hover:shadow-card-hover 
-             dark:hover:shadow-card-dark-hover hover:-translate-y-1 hover:border-primary/20 
-             dark:hover:border-primary/40;
+      @apply bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-xl overflow-hidden transition-all duration-300 hover:shadow-card-hover dark:hover:shadow-card-dark-hover hover:-translate-y-1 hover:border-primary/20 dark:hover:border-primary/40;
     }
-    .product-card:hover .quick-actions { opacity: 1; transform: translateY(0); }
-    .quick-actions { opacity: 0; transform: translateY(10px); transition: all .25s ease; }
-    
+
+    .product-card:hover .quick-actions {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .quick-actions {
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all .25s ease;
+    }
+
     .filter-item {
-      @apply flex items-center justify-between py-2 px-3 rounded-lg hover:bg-primary/5 
-             dark:hover:bg-primary/10 transition-colors duration-200 cursor-pointer;
+      @apply flex items-center justify-between py-2 px-3 rounded-lg hover:bg-primary/5 dark:hover:bg-primary/10 transition-colors duration-200 cursor-pointer;
     }
-    .filter-item.active { @apply bg-primary/10 dark:bg-primary/20 text-primary font-semibold; }
-    
+
+    .filter-item.active {
+      @apply bg-primary/10 dark:bg-primary/20 text-primary font-semibold;
+    }
+
     .skeleton {
       background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
       background-size: 200% 100%;
       animation: shimmer 1.5s infinite;
     }
+
     .dark .skeleton {
       background: linear-gradient(90deg, #2d2d42 25%, #3d3d52 50%, #2d2d42 75%);
       background-size: 200% 100%;
     }
-    
-    .badge { @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium; }
-    .badge-primary { @apply bg-primary/10 text-primary; }
-    .badge-secondary { @apply bg-secondary/10 text-secondary; }
-    
+
+    .badge {
+      @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+    }
+
+    .badge-primary {
+      @apply bg-primary/10 text-primary;
+    }
+
+    .badge-secondary {
+      @apply bg-secondary/10 text-secondary;
+    }
+
     .btn-primary {
-      @apply bg-primary hover:bg-primary-hover text-white font-semibold py-2.5 px-5 rounded-lg
-             transition-all duration-300 hover:shadow-glow dark:hover:shadow-glow-dark
-             active:scale-[0.98] flex items-center justify-center gap-2;
+      @apply bg-primary hover:bg-primary-hover text-white font-semibold py-2.5 px-5 rounded-lg transition-all duration-300 hover:shadow-glow dark:hover:shadow-glow-dark active:scale-[0.98] flex items-center justify-center gap-2;
     }
-    
+
     .btn-secondary {
-      @apply bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark
-             hover:border-primary/30 dark:hover:border-primary/50 text-gray-800 dark:text-gray-200
-             font-semibold py-2.5 px-5 rounded-lg transition-all duration-300
-             hover:shadow-card active:scale-[0.98] flex items-center justify-center gap-2;
+      @apply bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark hover:border-primary/30 dark:hover:border-primary/50 text-gray-800 dark:text-gray-200 font-semibold py-2.5 px-5 rounded-lg transition-all duration-300 hover:shadow-card active:scale-[0.98] flex items-center justify-center gap-2;
     }
-    
+
     select.custom-select {
-      @apply appearance-none bg-surface-light dark:bg-surface-dark border border-border-light 
-             dark:border-border-dark rounded-lg py-2.5 pl-4 pr-10 text-sm font-semibold 
-             focus:ring-2 focus:ring-primary/20 focus:border-primary/30 w-full;
+      @apply appearance-none bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-lg py-2.5 pl-4 pr-10 text-sm font-semibold focus:ring-2 focus:ring-primary/20 focus:border-primary/30 w-full;
     }
-    
+
     :focus-visible {
       outline: 2px solid #1313ec;
       outline-offset: 2px;
@@ -149,7 +180,8 @@
   <script src="./js/env.js"></script>
 </head>
 
-<body class="bg-background-light dark:bg-background-dark text-gray-900 dark:text-gray-100 min-h-screen transition-colors duration-300">
+<body
+  class="bg-background-light dark:bg-background-dark text-gray-900 dark:text-gray-100 min-h-screen transition-colors duration-300">
   <!-- HEADER INJECT -->
   <div id="site-header"></div>
 
@@ -211,7 +243,8 @@
           </div>
 
           <!-- Más filtros (especificaciones) -->
-          <div id="spec-facets-wrap" class="hidden bg-surface-light dark:bg-surface-dark rounded-2xl p-6 shadow-card dark:shadow-card-dark">
+          <div id="spec-facets-wrap"
+            class="hidden bg-surface-light dark:bg-surface-dark rounded-2xl p-6 shadow-card dark:shadow-card-dark">
             <div class="flex items-center justify-between mb-4">
               <h4 class="font-bold">Especificaciones</h4>
               <span class="material-symbols-outlined text-text-muted dark:text-text-muted-dark text-lg">tune</span>
@@ -220,13 +253,15 @@
           </div>
 
           <!-- Nota informativa -->
-          <div class="bg-gradient-to-br from-primary/5 to-secondary/5 dark:from-primary/10 dark:to-secondary/10 rounded-2xl p-6 border border-primary/20">
+          <div
+            class="bg-gradient-to-br from-primary/5 to-secondary/5 dark:from-primary/10 dark:to-secondary/10 rounded-2xl p-6 border border-primary/20">
             <div class="flex items-start gap-3">
               <span class="material-symbols-outlined text-primary text-xl">info</span>
               <div>
                 <p class="text-sm font-semibold text-primary dark:text-primary-light mb-1">Carrito activo</p>
                 <p class="text-sm text-text-muted dark:text-text-muted-dark">
-                  El carrito funciona en modo demo. Al finalizar la compra, se genera un mensaje de WhatsApp con tu pedido.
+                  El carrito funciona en modo demo. Al finalizar la compra, se genera un mensaje de WhatsApp con tu
+                  pedido.
                 </p>
               </div>
             </div>
@@ -238,11 +273,13 @@
       <section class="flex-1 min-w-0">
         <!-- Breadcrumb -->
         <nav class="flex items-center gap-2 text-sm mb-6 animate-slide-up">
-          <a href="./index.html" class="text-text-muted dark:text-text-muted-dark hover:text-primary dark:hover:text-primary-light transition-colors">
+          <a href="./index.html"
+            class="text-text-muted dark:text-text-muted-dark hover:text-primary dark:hover:text-primary-light transition-colors">
             Inicio
           </a>
           <span class="text-text-muted dark:text-text-muted-dark">›</span>
-          <a href="./shop.html" class="text-text-muted dark:text-text-muted-dark hover:text-primary dark:hover:text-primary-light transition-colors">
+          <a href="./shop.html"
+            class="text-text-muted dark:text-text-muted-dark hover:text-primary dark:hover:text-primary-light transition-colors">
             Tienda
           </a>
           <span id="crumb-category-wrap" class="hidden">
@@ -255,7 +292,8 @@
         <div class="mb-8 animate-slide-up" style="animation-delay: 0.1s">
           <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div>
-              <h1 id="page-title" class="text-3xl md:text-4xl font-black tracking-tight mb-2">Componentes Tecnológicos</h1>
+              <h1 id="page-title" class="text-3xl md:text-4xl font-black tracking-tight mb-2">Componentes Tecnológicos
+              </h1>
               <p id="result-subtitle" class="text-text-muted dark:text-text-muted-dark">
                 <span class="skeleton inline-block h-4 w-48 rounded"></span>
               </p>
@@ -271,7 +309,8 @@
                   <option value="name_asc">Nombre: A-Z</option>
                   <option value="name_desc">Nombre: Z-A</option>
                 </select>
-                <span class="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted dark:text-text-muted-dark pointer-events-none material-symbols-outlined text-sm">
+                <span
+                  class="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted dark:text-text-muted-dark pointer-events-none material-symbols-outlined text-sm">
                   expand_more
                 </span>
               </div>
@@ -282,7 +321,8 @@
         <div id="state-box" class="hidden"></div>
 
         <!-- Grid productos -->
-        <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in" style="animation-delay: 0.2s">
+        <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in"
+          style="animation-delay: 0.2s">
           <div class="product-card p-5">
             <div class="skeleton rounded-xl h-48 mb-4"></div>
             <div class="skeleton h-5 rounded mb-3 w-3/4"></div>
@@ -333,11 +373,13 @@
 
   <!-- Modal filtros móviles -->
   <div id="mobile-filters-modal" class="fixed inset-0 z-50 hidden">
-    <div class="absolute inset-0 bg-black/50" onclick="document.getElementById('mobile-filters-modal').classList.add('hidden')"></div>
+    <div class="absolute inset-0 bg-black/50"
+      onclick="document.getElementById('mobile-filters-modal').classList.add('hidden')"></div>
     <div class="absolute inset-y-0 left-0 w-4/5 max-w-sm bg-surface-light dark:bg-surface-dark overflow-y-auto p-6">
       <div class="flex items-center justify-between mb-6">
         <h3 class="text-xl font-bold">Filtros</h3>
-        <button onclick="document.getElementById('mobile-filters-modal').classList.add('hidden')" class="p-2 hover:bg-primary/10 rounded-lg">
+        <button onclick="document.getElementById('mobile-filters-modal').classList.add('hidden')"
+          class="p-2 hover:bg-primary/10 rounded-lg">
           <span class="material-symbols-outlined">close</span>
         </button>
       </div>
@@ -353,20 +395,20 @@
 
   <!-- Script modal móvil -->
   <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
       const mobileToggle = document.getElementById('mobile-filter-toggle');
       const modal = document.getElementById('mobile-filters-modal');
       const mobileContent = document.getElementById('mobile-filters-content');
       const sidebar = document.querySelector('aside');
-      
+
       if (mobileToggle && sidebar) {
-        mobileToggle.addEventListener('click', function() {
+        mobileToggle.addEventListener('click', function () {
           mobileContent.innerHTML = sidebar.innerHTML;
           modal.classList.remove('hidden');
         });
       }
-      
-      document.addEventListener('keydown', function(e) {
+
+      document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
           modal.classList.add('hidden');
         }
@@ -376,4 +418,5 @@
 
   <!-- ✅ Quitado: script de "agregar al carrito" en las fichas -->
 </body>
+
 </html>
