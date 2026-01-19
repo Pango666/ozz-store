@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contenido Home - Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>tailwind.config = { theme: { extend: { colors: { primary: "#2563eb" } } } }</script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@400&display=swap"
+        rel="stylesheet" />
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+    <script src="../js/env.js"></script>
+</head>
+
+<body class="bg-slate-100 min-h-screen">
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar -->
+        <div id="admin-sidebar" class="flex-shrink-0 bg-slate-900 overflow-y-auto"></div>
+
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+            <div id="admin-topbar" class="flex-shrink-0"></div>
+
+            <main class="flex-1 overflow-y-auto p-6 lg:p-8">
+                <div class="max-w-4xl mx-auto">
+                    <!-- Header -->
+                    <div class="mb-8">
+                        <h1 class="text-2xl font-bold text-slate-900">Contenido del Home</h1>
+                        <p class="text-slate-500 mt-1">Edita el contenido de las secciones principales de la página de
+                            inicio</p>
+                    </div>
+
+                    <form id="home-form" class="space-y-8">
+                        <!-- HERO SECTION -->
+                        <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
+                            <div class="flex items-center gap-3 mb-6">
+                                <div
+                                    class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                                    <span class="material-symbols-outlined text-white">auto_awesome</span>
+                                </div>
+                                <div>
+                                    <h2 class="text-lg font-semibold text-slate-900">Sección Hero</h2>
+                                    <p class="text-sm text-slate-500">La sección principal que ve el usuario al entrar
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 mb-2">Badge /
+                                        Etiqueta</label>
+                                    <input type="text" id="hero-badge"
+                                        class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
+                                        placeholder="Ej: GAMING & WORKSTATION" />
+                                    <p class="text-xs text-slate-500 mt-1">Texto pequeño que aparece arriba del título
+                                    </p>
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 mb-2">Título
+                                        Principal</label>
+                                    <input type="text" id="hero-title"
+                                        class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
+                                        placeholder="Ej: Componentes Premium para tu Setup" />
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 mb-2">Descripción</label>
+                                    <textarea id="hero-description" rows="3"
+                                        class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none resize-none"
+                                        placeholder="Encuentra los mejores componentes de tecnología..."></textarea>
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 mb-2">URL de Imagen
+                                        Hero</label>
+                                    <input type="url" id="hero-image"
+                                        class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
+                                        placeholder="https://ejemplo.com/hero-image.jpg" />
+                                </div>
+
+                                <!-- Hero Stats -->
+                                <div class="pt-4 border-t border-slate-200">
+                                    <label class="block text-sm font-medium text-slate-700 mb-3">Estadísticas del Hero
+                                        (3)</label>
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                        <div class="space-y-2">
+                                            <input type="text" id="hero-stat1-value"
+                                                class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
+                                                placeholder="Valor (ej: 240Hz)" />
+                                            <input type="text" id="hero-stat1-label"
+                                                class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
+                                                placeholder="Etiqueta (ej: Monitores)" />
+                                        </div>
+                                        <div class="space-y-2">
+                                            <input type="text" id="hero-stat2-value"
+                                                class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
+                                                placeholder="Valor (ej: RTX)" />
+                                            <input type="text" id="hero-stat2-label"
+                                                class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
+                                                placeholder="Etiqueta (ej: GPUs)" />
+                                        </div>
+                                        <div class="space-y-2">
+                                            <input type="text" id="hero-stat3-value"
+                                                class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
+                                                placeholder="Valor (ej: RGB)" />
+                                            <input type="text" id="hero-stat3-label"
+                                                class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
+                                                placeholder="Etiqueta (ej: Customizable)" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- TECH SECTION -->
+                        <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
+                            <div class="flex items-center gap-3 mb-6">
+                                <div
+                                    class="w-10 h-10 bg-gradient-to-br from-green-500 to-teal-600 rounded-lg flex items-center justify-center">
+                                    <span class="material-symbols-outlined text-white">verified</span>
+                                </div>
+                                <div>
+                                    <h2 class="text-lg font-semibold text-slate-900">Sección "Tecnología con precio
+                                        justo"</h2>
+                                    <p class="text-sm text-slate-500">La sección oscura que destaca los valores de la
+                                        tienda</p>
+                                </div>
+                            </div>
+
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 mb-2">Título</label>
+                                    <input type="text" id="tech-title"
+                                        class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
+                                        placeholder="Ej: Tecnología con precio justo y calidad real" />
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 mb-2">Descripción</label>
+                                    <textarea id="tech-description" rows="4"
+                                        class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none resize-none"
+                                        placeholder="Somos una tienda que está creciendo fuerte..."></textarea>
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 mb-2">URL de Imagen</label>
+                                    <input type="url" id="tech-image"
+                                        class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
+                                        placeholder="https://ejemplo.com/tech-image.jpg" />
+                                </div>
+
+                                <!-- Features -->
+                                <div class="pt-4 border-t border-slate-200">
+                                    <label class="block text-sm font-medium text-slate-700 mb-3">Características
+                                        (3)</label>
+                                    <div class="space-y-4">
+                                        <!-- Feature 1 -->
+                                        <div class="p-4 bg-slate-50 rounded-lg space-y-3">
+                                            <p class="text-xs font-medium text-slate-500">Característica 1</p>
+                                            <input type="text" id="tech-feature1-icon"
+                                                class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
+                                                placeholder="Icono: verified" />
+                                            <input type="text" id="tech-feature1-title"
+                                                class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
+                                                placeholder="Título: Productos verificados" />
+                                            <input type="text" id="tech-feature1-desc"
+                                                class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
+                                                placeholder="Descripción: Revisamos y validamos antes de entregar" />
+                                        </div>
+                                        <!-- Feature 2 -->
+                                        <div class="p-4 bg-slate-50 rounded-lg space-y-3">
+                                            <p class="text-xs font-medium text-slate-500">Característica 2</p>
+                                            <input type="text" id="tech-feature2-icon"
+                                                class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
+                                                placeholder="Icono: local_fire_department" />
+                                            <input type="text" id="tech-feature2-title"
+                                                class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
+                                                placeholder="Título: Mejor valor por tu dinero" />
+                                            <input type="text" id="tech-feature2-desc"
+                                                class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
+                                                placeholder="Descripción: Calidad y precio sin inflar" />
+                                        </div>
+                                        <!-- Feature 3 -->
+                                        <div class="p-4 bg-slate-50 rounded-lg space-y-3">
+                                            <p class="text-xs font-medium text-slate-500">Característica 3</p>
+                                            <input type="text" id="tech-feature3-icon"
+                                                class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
+                                                placeholder="Icono: support_agent" />
+                                            <input type="text" id="tech-feature3-title"
+                                                class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
+                                                placeholder="Título: Soporte y compatibilidad" />
+                                            <input type="text" id="tech-feature3-desc"
+                                                class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
+                                                placeholder="Descripción: Te ayudamos con armado y dudas" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Stats -->
+                                <div class="pt-4 border-t border-slate-200">
+                                    <label class="block text-sm font-medium text-slate-700 mb-3">Estadísticas
+                                        (3)</label>
+                                    <div class="space-y-4">
+                                        <div class="p-3 bg-slate-50 rounded-lg grid grid-cols-2 gap-3">
+                                            <input type="text" id="tech-stat1-value"
+                                                class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
+                                                placeholder="Valor: 1K+" />
+                                            <input type="text" id="tech-stat1-label"
+                                                class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
+                                                placeholder="Etiqueta: Clientes" />
+                                        </div>
+                                        <div class="p-3 bg-slate-50 rounded-lg grid grid-cols-2 gap-3">
+                                            <input type="text" id="tech-stat2-value"
+                                                class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
+                                                placeholder="Valor: Top" />
+                                            <input type="text" id="tech-stat2-label"
+                                                class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
+                                                placeholder="Etiqueta: Precios" />
+                                        </div>
+                                        <div class="p-3 bg-slate-50 rounded-lg grid grid-cols-2 gap-3">
+                                            <input type="text" id="tech-stat3-value"
+                                                class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
+                                                placeholder="Valor: Original" />
+                                            <input type="text" id="tech-stat3-label"
+                                                class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
+                                                placeholder="Etiqueta: Calidad" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Save Button -->
+                        <div class="flex items-center justify-between pt-4">
+                            <a href="../index.html" target="_blank" class="text-sm text-primary hover:underline">
+                                Ver página principal →
+                            </a>
+                            <button type="submit" id="btn-save"
+                                class="px-8 py-3 bg-primary text-white font-medium rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7" />
+                                </svg>
+                                Guardar cambios
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script type="module">
+        import { requireAdmin } from '../js/admin/auth.js';
+        import { initAdminLayout, showToast, setBreadcrumb } from '../js/admin/layout.js';
+        import { supabase } from '../js/supabaseClient.js';
+
+        let storeId = null;
+
+        // All settings keys for home content
+        const heroKeys = [
+            'home_hero_badge', 'home_hero_title', 'home_hero_description', 'home_hero_image',
+            'home_hero_stat1_value', 'home_hero_stat1_label',
+            'home_hero_stat2_value', 'home_hero_stat2_label',
+            'home_hero_stat3_value', 'home_hero_stat3_label'
+        ];
+
+        const techKeys = [
+            'home_tech_title', 'home_tech_description', 'home_tech_image',
+            'home_tech_feature1_icon', 'home_tech_feature1_title', 'home_tech_feature1_desc',
+            'home_tech_feature2_icon', 'home_tech_feature2_title', 'home_tech_feature2_desc',
+            'home_tech_feature3_icon', 'home_tech_feature3_title', 'home_tech_feature3_desc',
+            'home_tech_stat1_value', 'home_tech_stat1_label',
+            'home_tech_stat2_value', 'home_tech_stat2_label',
+            'home_tech_stat3_value', 'home_tech_stat3_label'
+        ];
+
+        const allKeys = [...heroKeys, ...techKeys];
+
+        async function init() {
+            const access = await requireAdmin();
+            if (!access) return;
+
+            storeId = access.store.id;
+            await initAdminLayout(access);
+            setBreadcrumb('Contenido Home');
+
+            document.querySelector('[data-page="home-content"]')?.classList.add('active');
+
+            await loadSettings();
+        }
+
+        async function loadSettings() {
+            const { data } = await supabase
+                .from('settings')
+                .select('key, value')
+                .eq('store_id', storeId)
+                .in('key', allKeys);
+
+            const config = {};
+            data?.forEach(s => { config[s.key] = s.value; });
+
+            // Hero fields
+            document.getElementById('hero-badge').value = config.home_hero_badge || '';
+            document.getElementById('hero-title').value = config.home_hero_title || '';
+            document.getElementById('hero-description').value = config.home_hero_description || '';
+            document.getElementById('hero-image').value = config.home_hero_image || '';
+            document.getElementById('hero-stat1-value').value = config.home_hero_stat1_value || '';
+            document.getElementById('hero-stat1-label').value = config.home_hero_stat1_label || '';
+            document.getElementById('hero-stat2-value').value = config.home_hero_stat2_value || '';
+            document.getElementById('hero-stat2-label').value = config.home_hero_stat2_label || '';
+            document.getElementById('hero-stat3-value').value = config.home_hero_stat3_value || '';
+            document.getElementById('hero-stat3-label').value = config.home_hero_stat3_label || '';
+
+            // Tech fields
+            document.getElementById('tech-title').value = config.home_tech_title || '';
+            document.getElementById('tech-description').value = config.home_tech_description || '';
+            document.getElementById('tech-image').value = config.home_tech_image || '';
+            document.getElementById('tech-feature1-icon').value = config.home_tech_feature1_icon || '';
+            document.getElementById('tech-feature1-title').value = config.home_tech_feature1_title || '';
+            document.getElementById('tech-feature1-desc').value = config.home_tech_feature1_desc || '';
+            document.getElementById('tech-feature2-icon').value = config.home_tech_feature2_icon || '';
+            document.getElementById('tech-feature2-title').value = config.home_tech_feature2_title || '';
+            document.getElementById('tech-feature2-desc').value = config.home_tech_feature2_desc || '';
+            document.getElementById('tech-feature3-icon').value = config.home_tech_feature3_icon || '';
+            document.getElementById('tech-feature3-title').value = config.home_tech_feature3_title || '';
+            document.getElementById('tech-feature3-desc').value = config.home_tech_feature3_desc || '';
+            document.getElementById('tech-stat1-value').value = config.home_tech_stat1_value || '';
+            document.getElementById('tech-stat1-label').value = config.home_tech_stat1_label || '';
+            document.getElementById('tech-stat2-value').value = config.home_tech_stat2_value || '';
+            document.getElementById('tech-stat2-label').value = config.home_tech_stat2_label || '';
+            document.getElementById('tech-stat3-value').value = config.home_tech_stat3_value || '';
+            document.getElementById('tech-stat3-label').value = config.home_tech_stat3_label || '';
+        }
+
+        async function saveSetting(key, value) {
+            const { data: existing } = await supabase
+                .from('settings')
+                .select('id')
+                .eq('store_id', storeId)
+                .eq('key', key)
+                .maybeSingle();
+
+            if (existing) {
+                await supabase.from('settings').update({ value }).eq('id', existing.id);
+            } else if (value) {
+                await supabase.from('settings').insert({ store_id: storeId, key, value });
+            }
+        }
+
+        document.getElementById('home-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btn-save');
+            btn.disabled = true;
+            btn.textContent = 'Guardando...';
+
+            try {
+                // Hero
+                await saveSetting('home_hero_badge', document.getElementById('hero-badge').value);
+                await saveSetting('home_hero_title', document.getElementById('hero-title').value);
+                await saveSetting('home_hero_description', document.getElementById('hero-description').value);
+                await saveSetting('home_hero_image', document.getElementById('hero-image').value);
+                await saveSetting('home_hero_stat1_value', document.getElementById('hero-stat1-value').value);
+                await saveSetting('home_hero_stat1_label', document.getElementById('hero-stat1-label').value);
+                await saveSetting('home_hero_stat2_value', document.getElementById('hero-stat2-value').value);
+                await saveSetting('home_hero_stat2_label', document.getElementById('hero-stat2-label').value);
+                await saveSetting('home_hero_stat3_value', document.getElementById('hero-stat3-value').value);
+                await saveSetting('home_hero_stat3_label', document.getElementById('hero-stat3-label').value);
+
+                // Tech
+                await saveSetting('home_tech_title', document.getElementById('tech-title').value);
+                await saveSetting('home_tech_description', document.getElementById('tech-description').value);
+                await saveSetting('home_tech_image', document.getElementById('tech-image').value);
+                await saveSetting('home_tech_feature1_icon', document.getElementById('tech-feature1-icon').value);
+                await saveSetting('home_tech_feature1_title', document.getElementById('tech-feature1-title').value);
+                await saveSetting('home_tech_feature1_desc', document.getElementById('tech-feature1-desc').value);
+                await saveSetting('home_tech_feature2_icon', document.getElementById('tech-feature2-icon').value);
+                await saveSetting('home_tech_feature2_title', document.getElementById('tech-feature2-title').value);
+                await saveSetting('home_tech_feature2_desc', document.getElementById('tech-feature2-desc').value);
+                await saveSetting('home_tech_feature3_icon', document.getElementById('tech-feature3-icon').value);
+                await saveSetting('home_tech_feature3_title', document.getElementById('tech-feature3-title').value);
+                await saveSetting('home_tech_feature3_desc', document.getElementById('tech-feature3-desc').value);
+                await saveSetting('home_tech_stat1_value', document.getElementById('tech-stat1-value').value);
+                await saveSetting('home_tech_stat1_label', document.getElementById('tech-stat1-label').value);
+                await saveSetting('home_tech_stat2_value', document.getElementById('tech-stat2-value').value);
+                await saveSetting('home_tech_stat2_label', document.getElementById('tech-stat2-label').value);
+                await saveSetting('home_tech_stat3_value', document.getElementById('tech-stat3-value').value);
+                await saveSetting('home_tech_stat3_label', document.getElementById('tech-stat3-label').value);
+
+                showToast('Cambios guardados correctamente', 'success');
+            } catch (err) {
+                console.error(err);
+                showToast('Error al guardar', 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg> Guardar cambios`;
+            }
+        });
+
+        init();
+    </script>
+</body>
+
+</html>

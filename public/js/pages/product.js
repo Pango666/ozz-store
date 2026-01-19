@@ -44,23 +44,102 @@ function pickFirstImage(mediaArr) {
   return arr[0]?.url || "https://placehold.co/1200x1200?text=Producto";
 }
 
+// Gallery state for navigation
+let currentGalleryImages = [];
+let currentGalleryIndex = 0;
+
 function renderThumbs(mediaArr, onPick) {
   const wrap = qs("#product-thumbs");
+  const mainImg = qs("#product-main-image");
+  const prevBtn = qs("#gallery-prev");
+  const nextBtn = qs("#gallery-next");
+  const indicator = qs("#gallery-indicator");
+  const currentSpan = qs("#gallery-current");
+  const totalSpan = qs("#gallery-total");
+  const gallery = qs("#product-gallery");
+
   if (!wrap) return;
   wrap.innerHTML = "";
 
   const arr = sortMedia(mediaArr);
-  if (arr.length <= 1) return;
+  currentGalleryImages = arr;
+  currentGalleryIndex = 0;
 
-  for (const m of arr) {
+  // Update gallery display
+  const updateGallery = (index) => {
+    if (index < 0) index = arr.length - 1;
+    if (index >= arr.length) index = 0;
+    currentGalleryIndex = index;
+
+    if (mainImg && arr[index]) {
+      mainImg.src = arr[index].url;
+      mainImg.alt = arr[index].alt || "Producto";
+    }
+    if (currentSpan) currentSpan.textContent = index + 1;
+    if (totalSpan) totalSpan.textContent = arr.length;
+
+    // Update thumbnail active state
+    wrap.querySelectorAll("button").forEach((btn, i) => {
+      if (i === index) {
+        btn.classList.add("border-2", "border-slate-800", "dark:border-white");
+        btn.classList.remove("border", "border-[#f0f0f4]", "dark:border-white/10");
+      } else {
+        btn.classList.remove("border-2", "border-slate-800", "dark:border-white");
+        btn.classList.add("border", "border-[#f0f0f4]", "dark:border-white/10");
+      }
+    });
+  };
+
+  // Show/hide navigation based on image count
+  if (arr.length > 1) {
+    prevBtn?.classList.remove("hidden");
+    nextBtn?.classList.remove("hidden");
+    indicator?.classList.remove("hidden");
+
+    // Arrow handlers
+    prevBtn?.addEventListener("click", (e) => {
+      e.preventDefault();
+      updateGallery(currentGalleryIndex - 1);
+    });
+    nextBtn?.addEventListener("click", (e) => {
+      e.preventDefault();
+      updateGallery(currentGalleryIndex + 1);
+    });
+
+    // Keyboard navigation
+    gallery?.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        updateGallery(currentGalleryIndex - 1);
+      } else if (e.key === "ArrowRight") {
+        e.preventDefault();
+        updateGallery(currentGalleryIndex + 1);
+      }
+    });
+  } else {
+    prevBtn?.classList.add("hidden");
+    nextBtn?.classList.add("hidden");
+    indicator?.classList.add("hidden");
+  }
+
+  // Render thumbnails
+  for (let i = 0; i < arr.length; i++) {
+    const m = arr[i];
     const btn = document.createElement("button");
     btn.type = "button";
     btn.className =
-      "w-20 h-20 rounded-xl overflow-hidden border border-[#f0f0f4] dark:border-white/10 bg-white/60 dark:bg-white/5 hover:shadow";
+      `w-20 h-20 rounded-xl overflow-hidden bg-white/60 dark:bg-white/5 hover:shadow transition-all ${i === 0 ? 'border-2 border-slate-800 dark:border-white' : 'border border-[#f0f0f4] dark:border-white/10'}`;
     btn.innerHTML = `<img class="w-full h-full object-cover" src="${escapeHtml(m.url)}" alt="${escapeHtml(m.alt || "")}">`;
-    btn.addEventListener("click", () => onPick(m.url));
+    btn.addEventListener("click", () => {
+      updateGallery(i);
+      onPick(m.url);
+    });
     wrap.appendChild(btn);
   }
+
+  // Initialize indicator
+  if (currentSpan) currentSpan.textContent = "1";
+  if (totalSpan) totalSpan.textContent = arr.length;
 }
 
 // ✅ normaliza specs: object | string(json) | array<object>

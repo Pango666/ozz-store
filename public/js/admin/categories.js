@@ -142,10 +142,13 @@ window.closeModal = function () {
 
 async function saveCategory() {
     const id = document.getElementById("edit-id").value;
-    const btn = document.querySelector("#category-form button[type='submit']");
-    const originalText = btn.textContent;
-    btn.disabled = true;
-    btn.textContent = "Guardando...";
+    const btn = document.querySelector("button[form='category-form'][type='submit']")
+        || document.querySelector("#category-form button[type='submit']");
+    const originalText = btn?.textContent || "Guardar";
+    if (btn) {
+        btn.disabled = true;
+        btn.textContent = "Guardando...";
+    }
 
     const data = {
         name: document.getElementById("edit-name").value.trim(),
@@ -172,8 +175,10 @@ async function saveCategory() {
         console.error(err);
         toast("Error: " + err.message, "error");
     } finally {
-        btn.disabled = false;
-        btn.textContent = originalText;
+        if (btn) {
+            btn.disabled = false;
+            btn.textContent = originalText;
+        }
     }
 }
 

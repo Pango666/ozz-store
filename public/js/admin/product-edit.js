@@ -7,6 +7,40 @@ import { supabase } from "../supabaseClient.js";
 let productId = null;
 let isNew = true;
 
+// Media state
+let allMedia = [];
+let allVariants = [];
+let currentGalleryIndex = 0;
+let currentTabFilter = "base"; // "base" or variant_id
+
+/**
+ * Get images for a selected variant with fallback to base images.
+ * @param {Array} productMedia - All product media items
+ * @param {string|null} selectedVariantId - The variant ID to filter by (null for base)
+ * @returns {Array} - Sorted array of images
+ */
+function getImagesForSelectedVariant(productMedia, selectedVariantId) {
+    const all = Array.isArray(productMedia) ? productMedia : [];
+    const base = all.filter(m => !m.variant_id);
+    const specific = selectedVariantId
+        ? all.filter(m => String(m.variant_id) === String(selectedVariantId))
+        : [];
+    const result = specific.length > 0 ? specific : base;
+    return result.sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0));
+}
+
+/**
+ * Get images for a specific filter (base or variant).
+ * Does NOT fallback - returns only exact matches.
+ */
+function getImagesForFilter(productMedia, filter) {
+    const all = Array.isArray(productMedia) ? productMedia : [];
+    if (filter === "base") {
+        return all.filter(m => !m.variant_id).sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0));
+    }
+    return all.filter(m => String(m.variant_id) === String(filter)).sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0));
+}
+
 async function init() {
     const access = await requireAdmin();
     if (!access) return;
@@ -16,8 +50,6 @@ async function init() {
     const params = new URLSearchParams(window.location.search);
     productId = params.get("id");
     isNew = !productId;
-
-    // Debug banner removed
 
     await loadSelectOptions();
 
@@ -30,9 +62,12 @@ async function init() {
         await loadMedia();
     } else {
         document.getElementById("btn-save").innerHTML = `<span class="material-symbols-outlined text-[18px]">add</span> Crear Producto`;
+        // Show info box explaining that media/variants come after first save
+        document.getElementById("new-product-info")?.classList.remove("hidden");
     }
 
     setupEventListeners();
+    setupGalleryNavigation();
 }
 
 async function loadSelectOptions() {
@@ -73,48 +108,243 @@ async function loadProduct() {
 
 // MEDIA FUNCTIONS
 async function loadMedia() {
-    const container = document.getElementById("media-list");
     try {
-        const { data: media } = await supabase
+        const { data: media, error } = await supabase
             .from("product_media")
             .select("*")
             .eq("product_id", productId)
-            .order("sort_order", { ascending: true });
+            .order("sort", { ascending: true });
 
-        if (!media?.length) {
-            container.innerHTML = `<p class="col-span-full text-center text-slate-400 py-4 text-sm">No hay imágenes cargadas</p>`;
+        if (error) {
+            console.error("Error loading media:", error);
             return;
         }
 
-        container.innerHTML = media.map(m => `
-            <div class="group relative aspect-square bg-slate-100 rounded-lg overflow-hidden border border-slate-200">
-                <img src="${escapeHtml(m.url)}" class="w-full h-full object-cover">
-                <button onclick="deleteMedia('${m.id}')" 
-                    class="absolute top-2 right-2 p-1.5 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600 shadow-sm">
-                    <span class="material-symbols-outlined text-[16px] block">delete</span>
-                </button>
-            </div>
-        `).join("");
+        allMedia = media || [];
+
+        updateImageVariantSelect();
+        updateMediaTabs();
+        renderMediaList();
+        renderGalleryPreview();
     } catch (err) {
-        console.error(err);
+        console.error("Exception loading media:", err);
     }
 }
 
-async function addMedia(url) {
-    if (!url) return;
+function updateImageVariantSelect() {
+    const select = document.getElementById("image-variant-select");
+    if (!select) return;
+
+    select.innerHTML = `<option value=""><span class="material-symbols-outlined">home</span> Producto Base (visible para todas las variantes)</option>` +
+        allVariants.map(v => `<option value="${v.id}">Variante: ${escapeHtml(v.sku || "Sin SKU")}</option>`).join("");
+}
+
+function updateMediaTabs() {
+    const tabsContainer = document.getElementById("media-tabs");
+    if (!tabsContainer) return;
+
+    const baseCount = allMedia.filter(m => !m.variant_id).length;
+
+    let html = `
+        <button type="button" data-tab="base" 
+            class="media-tab ${currentTabFilter === 'base' ? 'bg-primary text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'} px-4 py-2 text-sm font-medium rounded-lg transition-colors whitespace-nowrap flex items-center gap-1">
+            <span class="material-symbols-outlined text-[16px]">home</span> Base (${baseCount})
+        </button>
+    `;
+
+    for (const variant of allVariants) {
+        const count = allMedia.filter(m => String(m.variant_id) === String(variant.id)).length;
+        const isActive = currentTabFilter === variant.id;
+        html += `
+            <button type="button" data-tab="${variant.id}" 
+                class="media-tab ${isActive ? 'bg-primary text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'} px-4 py-2 text-sm font-medium rounded-lg transition-colors whitespace-nowrap flex items-center gap-1">
+                <span class="material-symbols-outlined text-[16px]">inventory_2</span> ${escapeHtml(variant.sku || "Var")} (${count})
+            </button>
+        `;
+    }
+
+    tabsContainer.innerHTML = html;
+
+    // Add click handlers
+    tabsContainer.querySelectorAll(".media-tab").forEach(btn => {
+        btn.addEventListener("click", () => {
+            currentTabFilter = btn.dataset.tab;
+            currentGalleryIndex = 0;
+            updateMediaTabs();
+            renderMediaList();
+            renderGalleryPreview();
+        });
+    });
+}
+
+function renderMediaList() {
+    const container = document.getElementById("media-list");
+    const emptyState = document.getElementById("media-empty");
+    if (!container) return;
+
+    const filtered = getImagesForFilter(allMedia, currentTabFilter);
+
+    if (!filtered.length) {
+        container.innerHTML = "";
+        emptyState?.classList.remove("hidden");
+        return;
+    }
+
+    emptyState?.classList.add("hidden");
+
+    container.innerHTML = filtered.map((m, idx) => `
+        <div class="group relative bg-slate-50 rounded-lg overflow-hidden border border-slate-200 hover:border-primary/50 transition-colors">
+            <div class="aspect-square">
+                <img src="${escapeHtml(m.url)}" alt="${escapeHtml(m.alt || '')}" class="w-full h-full object-cover">
+            </div>
+            ${idx === 0 ? '<span class="absolute top-2 left-2 px-2 py-0.5 bg-amber-500 text-white text-[10px] font-bold rounded flex items-center gap-1"><span class="material-symbols-outlined text-[12px]">star</span> Principal</span>' : ''}
+            <div class="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
+                <div class="flex gap-1">
+                    ${idx > 0 ? `<button onclick="moveMediaUp('${m.id}')" class="p-1.5 bg-white rounded-full shadow hover:bg-slate-100" title="Subir"><span class="material-symbols-outlined text-sm">arrow_upward</span></button>` : ''}
+                    ${idx < filtered.length - 1 ? `<button onclick="moveMediaDown('${m.id}')" class="p-1.5 bg-white rounded-full shadow hover:bg-slate-100" title="Bajar"><span class="material-symbols-outlined text-sm">arrow_downward</span></button>` : ''}
+                    <button onclick="deleteMedia('${m.id}')" class="p-1.5 bg-red-500 text-white rounded-full shadow hover:bg-red-600" title="Eliminar"><span class="material-symbols-outlined text-sm">delete</span></button>
+                </div>
+            </div>
+            ${m.alt ? `<div class="px-2 py-1 text-xs text-slate-500 truncate border-t border-slate-100">${escapeHtml(m.alt)}</div>` : ''}
+        </div>
+    `).join("");
+}
+
+function renderGalleryPreview() {
+    const mainImg = document.getElementById("gallery-main-image");
+    const thumbsContainer = document.getElementById("gallery-thumbs");
+    const indicator = document.getElementById("gallery-indicator");
+    const prevBtn = document.getElementById("gallery-prev");
+    const nextBtn = document.getElementById("gallery-next");
+    const currentSpan = document.getElementById("gallery-current");
+    const totalSpan = document.getElementById("gallery-total");
+
+    if (!mainImg) return;
+
+    // Use getImagesForSelectedVariant for gallery (with fallback behavior)
+    const images = currentTabFilter === "base"
+        ? getImagesForFilter(allMedia, "base")
+        : getImagesForSelectedVariant(allMedia, currentTabFilter);
+
+    if (!images.length) {
+        mainImg.src = "https://placehold.co/600x600/f1f5f9/94a3b8?text=Sin+imagen";
+        thumbsContainer.innerHTML = "";
+        indicator?.classList.add("hidden");
+        prevBtn?.classList.add("hidden");
+        nextBtn?.classList.add("hidden");
+        return;
+    }
+
+    // Clamp current index
+    if (currentGalleryIndex >= images.length) currentGalleryIndex = 0;
+    if (currentGalleryIndex < 0) currentGalleryIndex = images.length - 1;
+
+    // Update main image
+    mainImg.src = images[currentGalleryIndex].url;
+    mainImg.alt = images[currentGalleryIndex].alt || "Imagen del producto";
+
+    // Update indicator
+    if (images.length > 1) {
+        indicator?.classList.remove("hidden");
+        prevBtn?.classList.remove("hidden");
+        nextBtn?.classList.remove("hidden");
+        if (currentSpan) currentSpan.textContent = currentGalleryIndex + 1;
+        if (totalSpan) totalSpan.textContent = images.length;
+    } else {
+        indicator?.classList.add("hidden");
+        prevBtn?.classList.add("hidden");
+        nextBtn?.classList.add("hidden");
+    }
+
+    // Render thumbnails
+    thumbsContainer.innerHTML = images.map((m, idx) => `
+        <button type="button" onclick="setGalleryIndex(${idx})" 
+            class="flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 ${idx === currentGalleryIndex ? 'border-primary' : 'border-slate-200 hover:border-slate-400'} transition-colors">
+            <img src="${escapeHtml(m.url)}" alt="" class="w-full h-full object-cover">
+        </button>
+    `).join("");
+}
+
+function setupGalleryNavigation() {
+    const prevBtn = document.getElementById("gallery-prev");
+    const nextBtn = document.getElementById("gallery-next");
+    const galleryPreview = document.getElementById("gallery-preview");
+
+    prevBtn?.addEventListener("click", () => {
+        currentGalleryIndex--;
+        renderGalleryPreview();
+    });
+
+    nextBtn?.addEventListener("click", () => {
+        currentGalleryIndex++;
+        renderGalleryPreview();
+    });
+
+    // Keyboard navigation
+    galleryPreview?.addEventListener("keydown", (e) => {
+        if (e.key === "ArrowLeft") {
+            e.preventDefault();
+            currentGalleryIndex--;
+            renderGalleryPreview();
+        } else if (e.key === "ArrowRight") {
+            e.preventDefault();
+            currentGalleryIndex++;
+            renderGalleryPreview();
+        }
+    });
+}
+
+window.setGalleryIndex = function (idx) {
+    currentGalleryIndex = idx;
+    renderGalleryPreview();
+};
+
+async function addMedia(url, variantId, alt) {
+    if (!url) {
+        toast("Ingresa una URL de imagen", "warning");
+        return;
+    }
+
+    const btn = document.getElementById("btn-add-image");
+    const btnText = document.getElementById("btn-add-image-text");
+    const originalText = btnText?.textContent || "Agregar Imagen";
+
     try {
+        if (btn) btn.disabled = true;
+        if (btnText) btnText.textContent = "Agregando...";
+
+        // Get current max sort for this variant/base
+        const filtered = variantId
+            ? allMedia.filter(m => String(m.variant_id) === String(variantId))
+            : allMedia.filter(m => !m.variant_id);
+        const maxSort = filtered.reduce((max, m) => Math.max(max, m.sort || 0), -1);
+
         const { error } = await supabase.from("product_media").insert({
             product_id: productId,
             url: url,
-            type: "image",
-            sort_order: 0
+            alt: alt || null,
+            variant_id: variantId || null,
+            sort: maxSort + 1
         });
+
         if (error) throw error;
         toast("Imagen agregada", "success");
+
+        // Clear inputs
         document.getElementById("new-image-url").value = "";
+        document.getElementById("new-image-alt").value = "";
+
+        // Set tab to the one we just added to
+        currentTabFilter = variantId || "base";
+        currentGalleryIndex = 0;
+
         await loadMedia();
     } catch (err) {
-        toast("Error al agregar imagen", "error");
+        console.error(err);
+        toast("Error al agregar imagen: " + (err.message || ""), "error");
+    } finally {
+        if (btn) btn.disabled = false;
+        if (btnText) btnText.textContent = originalText;
     }
 }
 
@@ -124,11 +354,51 @@ window.deleteMedia = async function (id) {
         const { error } = await supabase.from("product_media").delete().eq("id", id);
         if (error) throw error;
         toast("Imagen eliminada", "success");
+        currentGalleryIndex = 0;
         await loadMedia();
     } catch (err) {
         toast("Error al eliminar imagen", "error");
     }
-}
+};
+
+window.moveMediaUp = async function (id) {
+    const filtered = getImagesForFilter(allMedia, currentTabFilter);
+    const idx = filtered.findIndex(m => m.id === id);
+    if (idx <= 0) return;
+
+    // Swap sort with previous item
+    const current = filtered[idx];
+    const prev = filtered[idx - 1];
+
+    try {
+        await Promise.all([
+            supabase.from("product_media").update({ sort: prev.sort }).eq("id", current.id),
+            supabase.from("product_media").update({ sort: current.sort }).eq("id", prev.id)
+        ]);
+        await loadMedia();
+    } catch (err) {
+        toast("Error al reordenar", "error");
+    }
+};
+
+window.moveMediaDown = async function (id) {
+    const filtered = getImagesForFilter(allMedia, currentTabFilter);
+    const idx = filtered.findIndex(m => m.id === id);
+    if (idx < 0 || idx >= filtered.length - 1) return;
+
+    const current = filtered[idx];
+    const next = filtered[idx + 1];
+
+    try {
+        await Promise.all([
+            supabase.from("product_media").update({ sort: next.sort }).eq("id", current.id),
+            supabase.from("product_media").update({ sort: current.sort }).eq("id", next.id)
+        ]);
+        await loadMedia();
+    } catch (err) {
+        toast("Error al reordenar", "error");
+    }
+};
 
 // VARIANTS FUNCTIONS
 async function loadVariants() {
@@ -140,7 +410,14 @@ async function loadVariants() {
             .eq("product_id", productId)
             .order("created_at");
 
-        if (!variants?.length) {
+        allVariants = variants || [];
+
+        // Update variant select for image uploader
+        updateImageVariantSelect();
+        // Update tabs to show variant tabs
+        updateMediaTabs();
+
+        if (!allVariants.length) {
             container.innerHTML = `
                 <div class="px-6 py-8 text-center text-slate-400 flex flex-col items-center">
                      <span class="material-symbols-outlined text-3xl mb-2 opacity-50">layers_clear</span>
@@ -150,7 +427,7 @@ async function loadVariants() {
             return;
         }
 
-        container.innerHTML = variants.map(v => `
+        container.innerHTML = allVariants.map(v => `
       <div class="flex items-center justify-between px-6 py-4 hover:bg-slate-50 transition-colors group">
         <div class="flex items-center gap-4">
            <div class="w-10 h-10 rounded-lg bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 font-mono text-xs font-bold">
@@ -193,7 +470,10 @@ function setupEventListeners() {
 
     // Media
     document.getElementById("btn-add-image")?.addEventListener("click", () => {
-        addMedia(document.getElementById("new-image-url").value.trim());
+        const url = document.getElementById("new-image-url").value.trim();
+        const variantId = document.getElementById("image-variant-select").value || null;
+        const alt = document.getElementById("new-image-alt").value.trim();
+        addMedia(url, variantId, alt);
     });
 
     // Variants
@@ -213,7 +493,7 @@ async function saveProduct() {
         btn.disabled = true;
         btn.innerHTML = `<span class="material-symbols-outlined animate-spin text-[18px]">sync</span> Guardando...`;
 
-        let specsJson = null;
+        let specsJson = {};
         try {
             const raw = document.getElementById("specs_json").value.trim();
             if (raw) specsJson = JSON.parse(raw);
@@ -221,7 +501,7 @@ async function saveProduct() {
             return toast("JSON specs inválido", "error");
         }
 
-        let landingJson = null;
+        let landingJson = {};
         try {
             const raw = document.getElementById("landing_json").value.trim();
             if (raw) landingJson = JSON.parse(raw);
@@ -295,6 +575,8 @@ async function saveVariant() {
         }
         closeVariantModal();
         await loadVariants();
+        // Update media tabs to reflect new variant
+        updateMediaTabs();
     } catch (err) {
         toast("Error: " + err.message, "error");
     } finally {
