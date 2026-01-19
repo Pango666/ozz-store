@@ -217,7 +217,7 @@
 
                 html += `
           <div class="category-card bg-white rounded-2xl border border-slate-200 overflow-hidden group">
-            <a href="shop.html?category=${cat.slug}" class="block p-8">
+            <a href="shop?category=${cat.slug}" class="block p-8">
               <div class="flex items-start justify-between mb-6">
                 <div class="w-20 h-20 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110" style="background-color: ${color}15">
                   <span class="material-symbols-outlined text-4xl" style="color: ${color}">${icon}</span>
@@ -232,13 +232,13 @@
                 <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">Subcategorías</p>
                 <div class="flex flex-wrap gap-2">
                   ${subs.map(sub => `
-                    <a href="shop.html?category=${sub.slug}" class="text-sm px-3 py-1.5 bg-slate-50 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors">${sub.name}</a>
+                    <a href="shop?category=${sub.slug}" class="text-sm px-3 py-1.5 bg-slate-50 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors">${sub.name}</a>
                   `).join('')}
                 </div>
               </div>
             ` : ''}
             <div class="px-8 pb-6">
-              <a href="shop.html?category=${cat.slug}" class="flex items-center text-blue-600 font-medium text-sm group-hover:gap-3 transition-all">
+              <a href="shop?category=${cat.slug}" class="flex items-center text-blue-600 font-medium text-sm group-hover:gap-3 transition-all">
                 <span>Ver productos</span>
                 <span class="material-symbols-outlined text-lg ml-1">arrow_forward</span>
               </a>
@@ -274,14 +274,29 @@
                     .eq('active', true)
                     .order('sort', { ascending: true });
 
-                // Get product counts per category
-                const { data: products } = await supabase
-                    .from('products')
-                    .select('id, category_id')
+                // Get active brands for filtering
+                const { data: activeBrands } = await supabase
+                    .from('brands')
+                    .select('id')
                     .eq('store_id', store.id)
                     .eq('active', true);
 
-                products?.forEach(p => {
+                const activeBrandIds = new Set((activeBrands || []).map(b => b.id));
+
+                // Get product counts per category (only products with active brands)
+                const { data: products } = await supabase
+                    .from('products')
+                    .select('id, category_id, brand_id')
+                    .eq('store_id', store.id)
+                    .eq('active', true);
+
+                // Filter products that have inactive brands
+                const filteredProducts = (products || []).filter(p => {
+                    if (p.brand_id && !activeBrandIds.has(p.brand_id)) return false;
+                    return true;
+                });
+
+                filteredProducts.forEach(p => {
                     if (p.category_id) {
                         productCounts[p.category_id] = (productCounts[p.category_id] || 0) + 1;
                     }

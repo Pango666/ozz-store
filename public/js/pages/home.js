@@ -74,47 +74,74 @@ async function getStoreId() {
  * 1) intenta featured=true
  * 2) si no existe/0 filas, intenta is_featured=true
  * 3) fallback: últimos activos
+ * ✅ Also filters out products with inactive brand/category
  */
 async function getFeaturedProducts(storeId, limit = 10) {
+  // Get active brands and categories first for filtering
+  const { data: activeBrands } = await supabase
+    .from("brands")
+    .select("id")
+    .eq("store_id", storeId)
+    .eq("active", true);
+
+  const { data: activeCats } = await supabase
+    .from("categories")
+    .select("id")
+    .eq("store_id", storeId)
+    .eq("active", true);
+
+  const activeBrandIds = new Set((activeBrands || []).map(b => b.id));
+  const activeCatIds = new Set((activeCats || []).map(c => c.id));
+
+  function filterByActive(products) {
+    return (products || []).filter(p => {
+      if (p.category_id && !activeCatIds.has(p.category_id)) return false;
+      if (p.brand_id && !activeBrandIds.has(p.brand_id)) return false;
+      return true;
+    });
+  }
+
   // 1) featured=true
   {
     const { data, error } = await supabase
       .from("products")
-      .select(`id,slug,name,short_desc,base_price,created_at,product_media(url,alt,sort)`)
+      .select(`id,slug,name,short_desc,base_price,created_at,category_id,brand_id,product_media(url,alt,sort)`)
       .eq("store_id", storeId)
       .eq("active", true)
       .eq("featured", true)
       .order("created_at", { ascending: false })
-      .limit(limit);
+      .limit(limit * 2); // fetch more in case some get filtered
 
-    if (!error && data?.length) return data;
+    const filtered = filterByActive(data);
+    if (!error && filtered.length) return filtered.slice(0, limit);
   }
 
   // 2) is_featured=true
   {
     const { data, error } = await supabase
       .from("products")
-      .select(`id,slug,name,short_desc,base_price,created_at,product_media(url,alt,sort)`)
+      .select(`id,slug,name,short_desc,base_price,created_at,category_id,brand_id,product_media(url,alt,sort)`)
       .eq("store_id", storeId)
       .eq("active", true)
       .eq("is_featured", true)
       .order("created_at", { ascending: false })
-      .limit(limit);
+      .limit(limit * 2);
 
-    if (!error && data?.length) return data;
+    const filtered = filterByActive(data);
+    if (!error && filtered.length) return filtered.slice(0, limit);
   }
 
   // 3) fallback: últimos activos
   const { data, error } = await supabase
     .from("products")
-    .select(`id,slug,name,short_desc,base_price,created_at,product_media(url,alt,sort)`)
+    .select(`id,slug,name,short_desc,base_price,created_at,category_id,brand_id,product_media(url,alt,sort)`)
     .eq("store_id", storeId)
     .eq("active", true)
     .order("created_at", { ascending: false })
-    .limit(limit);
+    .limit(limit * 2);
 
   if (error) throw error;
-  return data || [];
+  return filterByActive(data).slice(0, limit);
 }
 
 async function getBrands(storeId) {

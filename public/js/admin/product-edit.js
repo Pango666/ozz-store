@@ -13,6 +13,191 @@ let allVariants = [];
 let currentGalleryIndex = 0;
 let currentTabFilter = "base"; // "base" or variant_id
 
+// Specs editor state
+let specsRows = []; // [{key, type, value}]
+let specsCounter = 0;
+let showSpecsJson = false;
+
+// Specs Editor Functions
+function initSpecsEditor() {
+    document.getElementById("btn-add-spec")?.addEventListener("click", () => addSpecRow());
+    document.getElementById("toggle-specs-json")?.addEventListener("click", toggleSpecsJsonPreview);
+    renderSpecsEditor();
+}
+
+window.addSpecRow = function (key = "", type = "text", value = "") {
+    specsRows.push({ id: ++specsCounter, key, type, value });
+    renderSpecsEditor();
+};
+
+window.removeSpecRow = function (id) {
+    specsRows = specsRows.filter(r => r.id !== id);
+    renderSpecsEditor();
+};
+
+window.updateSpecRow = function (id, field, val) {
+    const row = specsRows.find(r => r.id === id);
+    if (row) {
+        row[field] = val;
+        // If type changed, reset value to appropriate default
+        if (field === "type") {
+            if (val === "boolean") row.value = "true";
+            else if (val === "number") row.value = "0";
+            else if (val === "list") row.value = "";
+            else row.value = "";
+        }
+        renderSpecsEditor();
+        updateSpecsJsonPreview();
+    }
+};
+
+function renderSpecsEditor() {
+    const container = document.getElementById("specs-list");
+    const emptyState = document.getElementById("specs-empty");
+    if (!container) return;
+
+    if (!specsRows.length) {
+        container.innerHTML = "";
+        emptyState?.classList.remove("hidden");
+        updateSpecsJsonPreview();
+        return;
+    }
+
+    emptyState?.classList.add("hidden");
+
+    container.innerHTML = specsRows.map(row => {
+        const typeOptions = [
+            { val: "text", label: "Texto", icon: "text_fields" },
+            { val: "number", label: "Número", icon: "123" },
+            { val: "boolean", label: "Sí/No", icon: "toggle_on" },
+            { val: "list", label: "Lista", icon: "list" }
+        ];
+
+        let valueInput = "";
+        if (row.type === "boolean") {
+            valueInput = `
+                <select onchange="updateSpecRow(${row.id}, 'value', this.value)"
+                    class="flex-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none">
+                    <option value="true" ${row.value === "true" ? "selected" : ""}>✓ Sí</option>
+                    <option value="false" ${row.value === "false" ? "selected" : ""}>✗ No</option>
+                </select>`;
+        } else if (row.type === "number") {
+            valueInput = `
+                <input type="number" step="any" value="${escapeHtml(row.value)}"
+                    onchange="updateSpecRow(${row.id}, 'value', this.value)"
+                    class="flex-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
+                    placeholder="0">`;
+        } else if (row.type === "list") {
+            valueInput = `
+                <input type="text" value="${escapeHtml(row.value)}"
+                    onchange="updateSpecRow(${row.id}, 'value', this.value)"
+                    class="flex-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
+                    placeholder="Valor 1, Valor 2, Valor 3">
+                <span class="text-xs text-slate-400 ml-1" title="Separar con comas">
+                    <span class="material-symbols-outlined text-sm">info</span>
+                </span>`;
+        } else {
+            valueInput = `
+                <input type="text" value="${escapeHtml(row.value)}"
+                    onchange="updateSpecRow(${row.id}, 'value', this.value)"
+                    class="flex-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
+                    placeholder="Valor">`;
+        }
+
+        return `
+            <div class="spec-row flex items-center gap-2 p-3 bg-slate-50 rounded-lg border border-slate-100 hover:border-slate-200 transition-colors">
+                <input type="text" value="${escapeHtml(row.key)}"
+                    onchange="updateSpecRow(${row.id}, 'key', this.value)"
+                    class="w-28 px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm font-medium focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
+                    placeholder="Nombre">
+                
+                <select onchange="updateSpecRow(${row.id}, 'type', this.value)"
+                    class="px-2 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none cursor-pointer">
+                    ${typeOptions.map(opt => `<option value="${opt.val}" ${row.type === opt.val ? "selected" : ""}>${opt.label}</option>`).join("")}
+                </select>
+                
+                ${valueInput}
+                
+                <button type="button" onclick="removeSpecRow(${row.id})"
+                    class="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                    title="Eliminar">
+                    <span class="material-symbols-outlined text-lg">delete</span>
+                </button>
+            </div>
+        `;
+    }).join("");
+
+    updateSpecsJsonPreview();
+}
+
+function toggleSpecsJsonPreview() {
+    showSpecsJson = !showSpecsJson;
+    const preview = document.getElementById("specs-json-preview");
+    const text = document.getElementById("toggle-specs-json-text");
+    if (showSpecsJson) {
+        preview?.classList.remove("hidden");
+        if (text) text.textContent = "Ocultar JSON";
+    } else {
+        preview?.classList.add("hidden");
+        if (text) text.textContent = "Ver JSON";
+    }
+    updateSpecsJsonPreview();
+}
+
+function updateSpecsJsonPreview() {
+    const preview = document.getElementById("specs-json-preview");
+    if (preview) {
+        const json = getSpecsAsJson();
+        preview.textContent = JSON.stringify(json, null, 2);
+    }
+}
+
+function getSpecsAsJson() {
+    const result = {};
+    for (const row of specsRows) {
+        if (!row.key.trim()) continue;
+        const key = row.key.trim();
+
+        if (row.type === "boolean") {
+            result[key] = row.value === "true";
+        } else if (row.type === "number") {
+            result[key] = parseFloat(row.value) || 0;
+        } else if (row.type === "list") {
+            result[key] = row.value.split(",").map(s => s.trim()).filter(Boolean);
+        } else {
+            result[key] = row.value || "";
+        }
+    }
+    return result;
+}
+
+function loadSpecsFromJson(json) {
+    specsRows = [];
+    specsCounter = 0;
+
+    if (!json || typeof json !== "object") return;
+
+    for (const [key, value] of Object.entries(json)) {
+        let type = "text";
+        let valStr = "";
+
+        if (typeof value === "boolean") {
+            type = "boolean";
+            valStr = value ? "true" : "false";
+        } else if (typeof value === "number") {
+            type = "number";
+            valStr = String(value);
+        } else if (Array.isArray(value)) {
+            type = "list";
+            valStr = value.join(", ");
+        } else {
+            valStr = String(value || "");
+        }
+
+        specsRows.push({ id: ++specsCounter, key, type, value: valStr });
+    }
+}
+
 /**
  * Get images for a selected variant with fallback to base images.
  * @param {Array} productMedia - All product media items
@@ -68,6 +253,7 @@ async function init() {
 
     setupEventListeners();
     setupGalleryNavigation();
+    initSpecsEditor();
 }
 
 async function loadSelectOptions() {
@@ -98,7 +284,12 @@ async function loadProduct() {
         document.getElementById("short_desc").value = product.short_desc || "";
         document.getElementById("description").value = product.description || "";
         document.getElementById("active").checked = product.active !== false;
-        if (product.specs_json) document.getElementById("specs_json").value = JSON.stringify(product.specs_json, null, 2);
+
+        // Load specs into visual editor (prioritize default_specs_json)
+        const specsData = product.default_specs_json || product.specs_json || {};
+        loadSpecsFromJson(specsData);
+        renderSpecsEditor();
+
         if (product.landing_json) document.getElementById("landing_json").value = JSON.stringify(product.landing_json, null, 2);
     } catch (err) {
         console.error(err);
@@ -493,13 +684,8 @@ async function saveProduct() {
         btn.disabled = true;
         btn.innerHTML = `<span class="material-symbols-outlined animate-spin text-[18px]">sync</span> Guardando...`;
 
-        let specsJson = {};
-        try {
-            const raw = document.getElementById("specs_json").value.trim();
-            if (raw) specsJson = JSON.parse(raw);
-        } catch {
-            return toast("JSON specs inválido", "error");
-        }
+        // Get specs from visual editor
+        const specsJson = getSpecsAsJson();
 
         let landingJson = {};
         try {
@@ -518,7 +704,8 @@ async function saveProduct() {
             short_desc: document.getElementById("short_desc").value.trim() || null,
             description: document.getElementById("description").value.trim() || null,
             active: document.getElementById("active").checked,
-            specs_json: specsJson,
+            default_specs_json: specsJson,  // Save to default_specs_json
+            specs_json: specsJson,          // Also save to specs_json for backwards compatibility
             landing_json: landingJson
         };
 

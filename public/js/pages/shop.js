@@ -137,7 +137,19 @@ async function loadProducts() {
     .limit(500);
 
   if (error) throw error;
-  allProducts = data || [];
+
+  // ✅ Filter out products with inactive brand or category
+  // We already have `categories` and `brands` arrays loaded with only active ones
+  const activeCatIds = new Set(categories.map(c => c.id));
+  const activeBrandIds = new Set(brands.map(b => b.id));
+
+  allProducts = (data || []).filter(p => {
+    // If product has a category, it must be in active categories
+    if (p.category_id && !activeCatIds.has(p.category_id)) return false;
+    // If product has a brand, it must be in active brands
+    if (p.brand_id && !activeBrandIds.has(p.brand_id)) return false;
+    return true;
+  });
 }
 
 async function loadVariantFacets(productIds) {
@@ -403,9 +415,9 @@ function renderBrands() {
   // como filterByCatsBrands usa brands también, temporalmente calculemos counts sin brands:
   const listNoBrand = (state.cats.size > 0)
     ? allProducts.filter(p => {
-        const catIds = new Set(categories.filter(c => state.cats.has(c.slug)).map(c => c.id));
-        return p.category_id && catIds.has(p.category_id);
-      })
+      const catIds = new Set(categories.filter(c => state.cats.has(c.slug)).map(c => c.id));
+      return p.category_id && catIds.has(p.category_id);
+    })
     : allProducts;
 
   const brandCount = countsByBrand(listNoBrand);
@@ -788,9 +800,13 @@ function bindUI() {
   state.q = (getParam("q") || "").trim();
   state.sort = (getParam("sort") || "latest").trim();
 
-  // cats=monitores,audifonos
+  // cats=monitores,audifonos OR category=monitores (single, from categories.html)
   const catsStr = (getParam("cats") || "").trim();
-  state.cats = new Set(catsStr ? catsStr.split(",").map(s => s.trim()).filter(Boolean) : []);
+  const singleCat = (getParam("category") || "").trim();
+  const initialCats = catsStr
+    ? catsStr.split(",").map(s => s.trim()).filter(Boolean)
+    : (singleCat ? [singleCat] : []);
+  state.cats = new Set(initialCats);
 
   // soporta brand=asus (home) y brands=asus,corsair (multi)
   const brandsStr = (getParam("brands") || "").trim();

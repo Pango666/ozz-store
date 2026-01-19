@@ -170,6 +170,39 @@ function normalizeSpecs(input) {
   return {};
 }
 
+function formatSpecValue(v) {
+  // Handle null/undefined
+  if (v === null || v === undefined) return "—";
+
+  // Handle booleans
+  if (typeof v === "boolean") return v ? "✓ Sí" : "✗ No";
+
+  // Handle arrays
+  if (Array.isArray(v)) {
+    // Check if array contains objects
+    if (v.length > 0 && typeof v[0] === "object") {
+      return v.map(item => formatSpecValue(item)).join("; ");
+    }
+    return v.map(item => escapeHtml(String(item))).join(", ");
+  }
+
+  // Handle nested objects
+  if (typeof v === "object") {
+    const entries = Object.entries(v);
+    if (entries.length === 0) return "—";
+
+    // Format as readable list
+    return entries.map(([key, val]) => {
+      const formattedKey = key.replace(/_/g, " ");
+      const formattedVal = formatSpecValue(val);
+      return `<span class="text-[#616189] dark:text-white/60">${escapeHtml(formattedKey)}:</span> ${formattedVal}`;
+    }).join("<br>");
+  }
+
+  // Handle primitives (string, number)
+  return escapeHtml(String(v));
+}
+
 function renderSpecs(specsObj) {
   const box = qs("#product-specs");
   if (!box) return;
@@ -182,12 +215,17 @@ function renderSpecs(specsObj) {
     return;
   }
 
-  box.innerHTML = entries.map(([k, v]) => `
+  box.innerHTML = entries.map(([k, v]) => {
+    const formattedValue = formatSpecValue(v);
+    const formattedKey = k.replace(/_/g, " ");
+
+    return `
     <div class="rounded-xl border border-[#f0f0f4] dark:border-white/10 p-4 bg-white/60 dark:bg-white/5">
-      <div class="text-[10px] font-bold uppercase tracking-widest text-[#616189] dark:text-white/40">${escapeHtml(k)}</div>
-      <div class="text-sm font-bold mt-1">${escapeHtml(String(v))}</div>
+      <div class="text-[10px] font-bold uppercase tracking-widest text-[#616189] dark:text-white/40">${escapeHtml(formattedKey)}</div>
+      <div class="text-sm font-bold mt-1">${formattedValue}</div>
     </div>
-  `).join("");
+  `;
+  }).join("");
 }
 
 function renderDescription(desc) {
@@ -327,7 +365,8 @@ async function getProductBySlug(storeId, slug) {
       id, store_id, category_id, brand_id,
       name, slug, short_desc, description, base_price,
       default_specs_json, specs_json, landing_json, active,
-      categories:categories ( id, name, slug ),
+      categories:categories ( id, name, slug, active ),
+      brands:brands ( id, name, slug, active ),
       product_media:product_media ( url, alt, sort, variant_id )
     `)
     .eq("store_id", storeId)
@@ -336,6 +375,19 @@ async function getProductBySlug(storeId, slug) {
     .limit(1)
     .single();
   if (error) throw error;
+
+  // ✅ Also check if brand or category is inactive
+  if (data) {
+    // If product has a category and it's inactive, treat as not found
+    if (data.categories && data.categories.active === false) {
+      throw new Error("Producto no disponible (categoría inactiva)");
+    }
+    // If product has a brand and it's inactive, treat as not found
+    if (data.brands && data.brands.active === false) {
+      throw new Error("Producto no disponible (marca inactiva)");
+    }
+  }
+
   return data;
 }
 
